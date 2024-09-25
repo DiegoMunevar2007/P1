@@ -323,14 +323,50 @@ void moves():
   				  else if (world.facingWest())
   				  {world.right(); }
   				}
- ( "," < DIRECTIONS > )*) ")"";"
+ ( "," (< FORWARD > {if (world.facingNorth())
+  								 {world.up(); }
+  								 else if (world.facingEast())
+								 {world.right(); }
+								 else if (world.facingSouth())
+								 {world.down(); }
+								 else if (world.facingWest())
+								 {world.left(); }
+  								}
+| < RIGHT > { if (world.facingNorth())
+  				  {world.right(); }
+  				  else if (world.facingEast())
+  				  {world.down(); }
+  				  else if (world.facingSouth())
+  				  {world.left(); }
+  				  else if (world.facingWest())
+  				  {world.up(); }
+  				}
+| < LEFT > { if (world.facingNorth())
+  				  {world.left(); }
+  				  else if (world.facingEast())
+  				  {world.up(); }
+  				  else if (world.facingSouth())
+  				  {world.right(); }
+  				  else if (world.facingWest())
+  				  {world.down(); }
+  				}
+| < BACK > { if (world.facingNorth())
+  				  {world.down(); }
+  				  else if (world.facingEast())
+  				  {world.left(); }
+  				  else if (world.facingSouth())
+  				  {world.up(); }
+  				  else if (world.facingWest())
+  				  {world.right(); }
+  				} )*) ")"";"
 }
 boolean isblocked():
 { }
 {
   < ISBLOCKED > "("< LEFT > { }
 | < RIGHT > { }
-| < FRONT > ")"
+| < FRONT > { }
+| < BACK > { } ")"
 }
 void isfacing():
 { }
