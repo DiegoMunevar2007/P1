@@ -119,6 +119,7 @@ TOKEN [IGNORE_CASE] : /* OPERATORS */
 | < FORWARD: "FORWARD" >
 |< RIGHT: "RIGHT" >
 |< LEFT: "LEFT" >
+| < FRONT : "FRONT" >
 | < BACK:"BACK" >
 | < NORTH: "NORTH" >
 | < EAST:"EAST" >
@@ -202,26 +203,31 @@ void turntomy():
   					  { world.turnRight(); world.turnRight(); }
   					  else if (world.facingSouth())
   					  { world.turnRight(); world.turnRight(); world.turnRight(); }
-  					  else { }
-  						}
+  					 }
   | < LEFT > { if (world.facingNorth())
   				  { world.turnRight(); world.turnRight(); world.turnRight(); }
   				  else if (world.facingEast())
   				  { world.turnRight(); world.turnRight(); }
   				  else if (world.facingSouth())
   				  { world.turnRight(); }
-  				  else { }
-  						}
+  			 }
   |< BACK > {if (world.facingNorth())
   				{ world.turnRight(); world.turnRight();  }
   				else if (world.facingEast())
   				{ world.turnRight(); }
   				else if (world.facingWest())
   				{ world.turnRight(); world.turnRight(); world.turnRight();  }
-  				world.buscarErrores();
-  						} )
+  		    }
+  | < FRONT > { if (world.facingEast())
+  				{world.turnRight(); world.turnRight(); world.turnRight(); }
+  				else if (world.facingSouth())
+  				{world.turnRight(); world.turnRight(); }
+  				else if (world.facingWest())
+  				{ world.turnRight();}
+             }
+  )                   
    ")"";"
-}
+} 
 void turntothe():
 { }
 {
@@ -269,7 +275,8 @@ void valor():
 | < MYCHIPS> { numero = Integer.parseInt(world.getMyChips()); }
 | < MYBALLOONS> { numero = Integer.parseInt(world.getMyBalloons()); }
 | < BALLOONSHERE> { numero = Integer.parseInt(world.countBalloons()); }
-| < CHIPSHERE> { numero = Integer.parseInt(world.countChips()); }
+| < CHIPSHERE> { numero = Integer.parseInt(world.countChips()); } // Pendiente porque no hay alguna funcion para poder contar las chips en una celda
+// TODO: roomForChips
 }
 void nop():
 { }
@@ -277,14 +284,53 @@ void nop():
   < NOP >";"
 }
 void moves():
-{ }
+{int perspectiva= world.getFacing(); }
+// Preguntar sobre que significa moves
 {
-  (< MOVES >) "(" (< DIRECTIONS > ( "," < DIRECTIONS > )*) ")"";"
+  (< MOVES >) "(" (< FORWARD > {if (world.facingNorth())
+  								 {world.up(); }
+  								 else if (world.facingEast())
+								 {world.right(); }
+								 else if (world.facingSouth())
+								 {world.down(); }
+								 else if (world.facingWest())
+								 {world.left(); }
+  								}
+| < RIGHT > { if (world.facingNorth())
+  				  {world.right(); }
+  				  else if (world.facingEast())
+  				  {world.down(); }
+  				  else if (world.facingSouth())
+  				  {world.left(); }
+  				  else if (world.facingWest())
+  				  {world.up(); }
+  				}
+| < LEFT > { if (world.facingNorth())
+  				  {world.left(); }
+  				  else if (world.facingEast())
+  				  {world.up(); }
+  				  else if (world.facingSouth())
+  				  {world.right(); }
+  				  else if (world.facingWest())
+  				  {world.down(); }
+  				}
+| < BACK > { if (world.facingNorth())
+  				  {world.down(); }
+  				  else if (world.facingEast())
+  				  {world.left(); }
+  				  else if (world.facingSouth())
+  				  {world.up(); }
+  				  else if (world.facingWest())
+  				  {world.right(); }
+  				}
+ ( "," < DIRECTIONS > )*) ")"";"
 }
-void isblocked():
+boolean isblocked():
 { }
 {
-  < ISBLOCKED > "("< DIRECTIONS > ")"
+  < ISBLOCKED > "("< LEFT > { }
+| < RIGHT > { }
+| < FRONT > ")"
 }
 void isfacing():
 { }
