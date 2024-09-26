@@ -1,0 +1,528 @@
+/*
+Gramatica para el Robot:
+Autor: Alejandro Arango
+Modificado por: Silvia Takahashi
+Modificado por: Juan Pablo Morales.
+Agregadas producciones para manejar globos
+Modificado por Silvia Takahashi
+
+
+ **/
+
+
+options 
+{
+  
+	LOOKAHEAD=1; 
+	IGNORE_CASE=true;
+	STATIC = false;
+	
+}
+   
+
+PARSER_BEGIN(Robot)
+
+package uniandes.lym.robot.control;
+
+import uniandes.lym.robot.kernel.*;
+import uniandes.lym.robot.view.Console;
+ 
+import java.awt.Point;
+import java.io.*;
+import java.util.Vector;
+import java.util.LinkedList;
+
+@SuppressWarnings("serial")
+public class Robot 
+{
+
+
+	private RobotWorldDec world;
+	
+	
+	void setWorld(RobotWorld w) {
+		world = (RobotWorldDec) w;	
+	}
+
+	String salida=new String();
+}
+PARSER_END(Robot)
+
+SKIP:
+{
+	" "
+	|	"\r"
+	|	"\t"
+	| "\n"
+}
+
+TOKEN: /* Nombres de Comandos */
+{
+
+			<MOV:  "Mov">
+		| 	<PUT: "Put">
+		|  <GO: "GO" >
+        |  < HOP:  "HOP" >		
+
+}
+
+TOKEN [IGNORE_CASE]:
+{
+  < TURNTOMY : "TURNTOMY" >
+| < TURNTOTHE: "TURNTOTHE" >
+| < WALK : "WALK" >
+| < JUMP : "JUMP" >
+| < DROP : "DROP" >
+| < PICK : "PICK" >
+| < GRAB : "GRAB" >
+| < LETGO  : "LETGO" >
+| < POP : "POP" >
+| < MOVES : "MOVES" >
+| < NOP : "NOP" >
+| < SAFEEXE : "SAFEEXE" >
+
+}
+TOKEN [IGNORE_CASE]:
+{
+ < IF  : "IF" >
+| < THEN : "THEN" >
+| < ELSE  : "ELSE" >
+| < DO : "DO" >
+| < REP : "REP" >
+| < TIMES: "TIMES" >
+
+}
+TOKEN [IGNORE_CASE]:
+{
+ <ISBLOCKED : "ISBLOCKED?" >
+ |< ISFACING : "ISFACING?" >
+ |< ZERO : "ZERO?" >
+ |< NOT : "NOT" >
+} 
+TOKEN [IGNORE_CASE] : /* OPERATORS */
+{
+< VALOR: (["0"-"9"])+ >
+| < SIZE: "SIZE" >
+| < MYX: "MYX" >
+| < MYY: "MYY" >
+| < MYCHIPS: "MYCHIPS" >
+| < MYBALLOONS: "MYBALLOONS" >
+| < BALLOONSHERE: "BALLOONSHERE" >
+| < CHIPSHERE: "CHIPSHERE" >
+| < ROOMFORCHIPS: "ROOMFORCHIPS" >
+| < EXEC : "EXEC"  >
+| < NEW :  "NEW" >
+| < MACRO: "MACRO" >
+| < FORWARD: "FORWARD" >
+|< RIGHT: "RIGHT" >
+|< LEFT: "LEFT" >
+| < FRONT : "FRONT" >
+| < BACK:"BACK" >
+| < NORTH: "NORTH" >
+| < EAST:"EAST" >
+| < WEST:"WEST" >
+|< SOUTH: "SOUTH" >
+| < FI : "F"|"f" "I"|"i" >
+| < ELEMENTO: (["a"-"z"] | ["0"-"9"] )+ >
+
+}
+TOKEN:
+{
+		<BALLOONS:  "BALLOONS" >
+		|	<CHIPS:     "CHIPS"  >	
+
+}
+
+
+
+TOKEN :
+{
+		<NUM: (<DIGIT>)+ >
+		|  	<#DIGIT: ["0"-"9"] >
+        
+}
+
+
+void inicial() :
+{}
+{
+ (
+   exec()| (< NEW > (var() | macro()))
+ )
+}
+
+
+void exec():
+{ }
+{
+	< EXEC > bloque()  
+}
+void var():
+{ }
+{
+  <ELEMENTO > "=" < ELEMENTO > 
+}
+void macro():
+{ }
+{
+	< MACRO >
+}
+void bloque():
+{}
+{
+  "{"( comando() )* "}"
+}
+
+void comando():
+{ }
+{
+ (walk()
+ | jump()
+ | drop()
+ | pick()
+ | grab()
+ | letgo()
+ | pop()
+ | turntomy()
+ | turntothe()
+ | moves()
+ |condicional()
+ |nop()
+ |safeexe())
+}
+void turntomy():
+{ }
+{
+  < TURNTOMY >
+  "(" (< RIGHT > { if (world.facingNorth())
+  					  { world.turnRight(); }
+  					  else if (world.facingWest())
+  					  { world.turnRight(); world.turnRight(); }
+  					  else if (world.facingSouth())
+  					  { world.turnRight(); world.turnRight(); world.turnRight(); }
+  					 }
+  | < LEFT > { if (world.facingNorth())
+  				  { world.turnRight(); world.turnRight(); world.turnRight(); }
+  				  else if (world.facingEast())
+  				  { world.turnRight(); world.turnRight(); }
+  				  else if (world.facingSouth())
+  				  { world.turnRight(); }
+  			 }
+  |< BACK > {if (world.facingNorth())
+  				{ world.turnRight(); world.turnRight();  }
+  				else if (world.facingEast())
+  				{ world.turnRight(); }
+  				else if (world.facingWest())
+  				{ world.turnRight(); world.turnRight(); world.turnRight();  }
+  		    }
+  | < FRONT > { if (world.facingEast())
+  				{world.turnRight(); world.turnRight(); world.turnRight(); }
+  				else if (world.facingSouth())
+  				{world.turnRight(); world.turnRight(); }
+  				else if (world.facingWest())
+  				{ world.turnRight();}
+             }
+  )                   
+   ")"";"
+} 
+void turntothe():
+{ }
+{
+  (< TURNTOTHE >) "("
+  (    <NORTH> {if (world.facingWest())
+  			{ world.turnRight(); }
+  			else if (world.facingSouth())
+  			{ world.turnRight(); world.turnRight();  }
+  			else if (world.facingEast())
+  			{world.turnRight(); world.turnRight(); world.turnRight(); }
+  			 }
+  			
+| < SOUTH > {if (world.facingNorth())
+				{world.turnRight(); world.turnRight(); }
+			else if (world.facingEast())
+				{ world.turnRight();}
+			else if (world.facingWest())
+				{ world.turnRight();world.turnRight();world.turnRight();}
+				 }
+
+| < EAST > {if (world.facingNorth())
+				{world.turnRight(); }
+			else if (world.facingWest())
+				{world.turnRight();world.turnRight(); }
+			else if (world.facingSouth())
+				{world.turnRight();world.turnRight();world.turnRight(); }}
+				
+| < WEST > {if (world.facingNorth())
+			{ world.turnRight();world.turnRight();world.turnRight();}
+			else if (world.facingEast())
+			{world.turnRight();world.turnRight();}
+			else if (world.facingSouth())
+			{world.turnRight();}  }
+	)
+   ")"";"
+}
+int valor():
+{ int numero= 0;}
+{
+  < VALOR > { numero= Integer.parseInt(token.image); return numero; }
+| < SIZE > { numero = world.getN(); return numero; }
+| < MYX> { numero = (int)world.getPosition().getX(); }
+| < MYY> { numero = (int)world.getPosition().getY(); }
+| < MYCHIPS> { numero = world.getMyChips(); }
+| < MYBALLOONS> { numero = world.getMyBalloons(); }
+| < BALLOONSHERE> { numero = world.countBalloons(); }
+| < CHIPSHERE> { } // Pendiente porque no hay alguna funcion para poder contar las chips en una celda
+// TODO: roomForChips
+}
+void nop():
+{ }
+{
+  < NOP >";"
+}
+void moves():
+{int perspectiva= world.getFacing(); }
+// Preguntar sobre que significa moves
+{
+  (< MOVES >) "(" (< FORWARD > {if (world.facingNorth())
+  								 {world.up(); }
+  								 else if (world.facingEast())
+								 {world.right(); }
+								 else if (world.facingSouth())
+								 {world.down(); }
+								 else if (world.facingWest())
+								 {world.left(); }
+  								}
+| < RIGHT > { if (world.facingNorth())
+  				  {world.right(); }
+  				  else if (world.facingEast())
+  				  {world.down(); }
+  				  else if (world.facingSouth())
+  				  {world.left(); }
+  				  else if (world.facingWest())
+  				  {world.up(); }
+  				}
+| < LEFT > { if (world.facingNorth())
+  				  {world.left(); }
+  				  else if (world.facingEast())
+  				  {world.up(); }
+  				  else if (world.facingSouth())
+  				  {world.right(); }
+  				  else if (world.facingWest())
+  				  {world.down(); }
+  				}
+| < BACK > { if (world.facingNorth())
+  				  {world.down(); }
+  				  else if (world.facingEast())
+  				  {world.left(); }
+  				  else if (world.facingSouth())
+  				  {world.up(); }
+  				  else if (world.facingWest())
+  				  {world.right(); }
+  				}
+  		)
+ ( "," < FORWARD > {if (world.facingNorth())
+  								 {world.up(); }
+  								 else if (world.facingEast())
+								 {world.right(); }
+								 else if (world.facingSouth())
+								 {world.down(); }
+								 else if (world.facingWest())
+								 {world.left(); }
+  								}
+| < RIGHT > { if (world.facingNorth())
+  				  {world.right(); }
+  				  else if (world.facingEast())
+  				  {world.down(); }
+  				  else if (world.facingSouth())
+  				  {world.left(); }
+  				  else if (world.facingWest())
+  				  {world.up(); }
+  				}
+| < LEFT > { if (world.facingNorth())
+  				  {world.left(); }
+  				  else if (world.facingEast())
+  				  {world.up(); }
+  				  else if (world.facingSouth())
+  				  {world.right(); }
+  				  else if (world.facingWest())
+  				  {world.down(); }
+  				}
+| < BACK > { if (world.facingNorth())
+  				  {world.down(); }
+  				  else if (world.facingEast())
+  				  {world.left(); }
+  				  else if (world.facingSouth())
+  				  {world.up(); }
+  				  else if (world.facingWest())
+  				  {world.right(); }
+  				} )* ")"";"
+}
+boolean isblocked():
+{Point pos = world.getPosition();
+ pos.clone();}
+{
+  < ISBLOCKED > ("("< LEFT > { pos.move((int)pos.getX()-1, (int)pos.getY());
+  System.out.println("si");
+  								return world.isBlocked(pos); }
+| < RIGHT > { pos.move((int)pos.getX()+1, (int)pos.getY());
+  								return world.isBlocked(pos); }
+| < FRONT > {pos.move((int)pos.getX(), (int)pos.getY()+1);
+  								return world.isBlocked(pos); }
+| < BACK > {pos.move((int)pos.getX(), (int)pos.getY()-1);
+  								return world.isBlocked(pos); }) ")"
+}
+void isfacing():
+{ }
+{
+  < ISFACING > "("(< NORTH > { } |< SOUTH > { } | < EAST > { } | < WEST > { } )  ")"
+}
+void zero():
+{ }
+{
+  < ZERO > "("< VALOR > ")"
+}
+void safeexe():
+{ }
+{
+  < SAFEEXE > "(" (walk() | jump() | drop() | pick() | grab() | letgo()| pop() ) ")" ";"
+}
+void condicion():
+{ }
+{
+  (isblocked() | isfacing() | zero() )
+}
+void not():
+{ }
+{
+ < NOT > "(" condicion() ")"
+}
+void condicional():
+{ }
+{
+  (< IF >)"("( not() | condicion() ) ")" (< THEN > bloque()) (< ELSE > bloque())? < FI >
+}
+
+
+
+void walk():
+{int numero = 0;}
+{
+ <WALK> "(" { numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";}")" ";"
+}
+
+void jump():
+{}
+{
+ <JUMP> "("{ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";} ")"";"
+}
+void drop():
+{}
+{
+ <DROP> "(" <VALOR>")" ";"
+}
+void pick():
+{}
+{
+ <PICK> "(" <VALOR>")" ";"
+}
+void grab():
+{}
+{
+ <GRAB> "(" <VALOR>")" ";"
+}
+void letgo():
+{}
+{
+ <LETGO> "(" <VALOR>")" ";"
+}
+void pop():
+{}
+{
+ <POP> "(" <VALOR>")"";"
+}
+
+
+	//boolean command(uniandes.lym.robot.view.Console sistema) :
+	boolean command(Console sistema):
+	{	
+		
+		int x,y;
+		salida=new String();	
+	}
+
+	
+	{
+		((((
+		  inicial()
+		| <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
+		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
+		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
+		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
+		|  <PUT> "("  put() ")"					  			
+		|  <PICK> "(" get()  ")"	
+	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
+		) ";")
+) 
+
+		{
+		    try {
+	    			 Thread.sleep(900);
+	    	    } catch (InterruptedException e) {
+	    			        System.err.format("IOException: %s%n", e);
+	    		    }
+	    			 
+			sistema.printOutput(salida);
+			return true;
+		})+
+
+    	| <EOF> {return false;} 
+	}
+
+	void put() :
+	{
+		int f=1;	
+	}
+	{
+		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
+		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
+
+	}
+
+	void get() :
+	{
+		int f=1;	
+	}
+	{
+		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
+		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
+
+	}
+
+	
+	
+
+	/**
+	 * Unsigned decimal number
+	 * @return the corresponding value of the string
+	 * @error  corresponding value is too large
+	 */
+
+	int num() throws Error:
+	{	
+		int total=1;
+	}
+	{
+		<NUM>
+		{
+			try 
+			{
+			} 
+			catch (NumberFormatException ee) 
+			{
+				throw new Error("Number out of bounds: "+token.image+" !!");
+			}
+			return total;
+		}
+	}
+
+	
