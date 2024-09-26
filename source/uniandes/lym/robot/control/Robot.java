@@ -381,9 +381,6 @@ if (world.facingNorth())
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case RIGHT:
-      case LEFT:
-      case BACK:
       case 64:{
         ;
         break;
@@ -392,9 +389,9 @@ if (world.facingNorth())
         jj_la1[8] = jj_gen;
         break label_2;
       }
+      jj_consume_token(64);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case 64:{
-        jj_consume_token(64);
+      case FORWARD:{
         jj_consume_token(FORWARD);
 if (world.facingNorth())
                                                                  {world.up(); }
@@ -491,28 +488,28 @@ pos.move((int)pos.getX(), (int)pos.getY()-1);
     throw new Error("Missing return statement in function");
 }
 
-  final public void isfacing() throws ParseException {
+  final public boolean isfacing() throws ParseException {boolean resp =false;
     jj_consume_token(ISFACING);
     jj_consume_token(61);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NORTH:{
       jj_consume_token(NORTH);
-
+resp= world.facingNorth();
       break;
       }
     case SOUTH:{
       jj_consume_token(SOUTH);
-
+resp = world.facingNorth();
       break;
       }
     case EAST:{
       jj_consume_token(EAST);
-
+resp = world.facingNorth();
       break;
       }
     case WEST:{
       jj_consume_token(WEST);
-
+resp = world.facingNorth();
       break;
       }
     default:
@@ -521,6 +518,8 @@ pos.move((int)pos.getX(), (int)pos.getY()-1);
       throw new ParseException();
     }
     jj_consume_token(62);
+{if ("" != null) return resp;}
+    throw new Error("Missing return statement in function");
 }
 
   final public boolean zero() throws ParseException {
@@ -572,18 +571,18 @@ pos.move((int)pos.getX(), (int)pos.getY()-1);
     jj_consume_token(63);
 }
 
-  final public boolean condicion() throws ParseException {
+  final public boolean condicion() throws ParseException {boolean resp = false;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ISBLOCKED:{
-      isblocked();
+      resp = isblocked();
       break;
       }
     case ISFACING:{
-      isfacing();
+      resp = isfacing();
       break;
       }
     case ZERO:{
-      zero();
+      resp = zero();
       break;
       }
     default:
@@ -591,28 +590,31 @@ pos.move((int)pos.getX(), (int)pos.getY()-1);
       jj_consume_token(-1);
       throw new ParseException();
     }
+{if ("" != null) return resp;}
+    throw new Error("Missing return statement in function");
 }
 
   final public boolean not() throws ParseException {boolean resp = false;
     jj_consume_token(NOT);
     jj_consume_token(61);
-resp=condicion(); {if ("" != null) return !resp;}
+resp = condicion();
     jj_consume_token(62);
+{if ("" != null) return !resp;}
     throw new Error("Missing return statement in function");
 }
 
-  final public void condicional() throws ParseException {
+  final public void condicional() throws ParseException {boolean resp= false;
     jj_consume_token(IF);
     jj_consume_token(61);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NOT:{
-      not();
+      resp = not();
       break;
       }
     case ISBLOCKED:
     case ISFACING:
     case ZERO:{
-      condicion();
+      resp = condicion();
       break;
       }
     default:
@@ -622,11 +624,11 @@ resp=condicion(); {if ("" != null) return !resp;}
     }
     jj_consume_token(62);
     jj_consume_token(THEN);
-    bloque();
+if (resp==true) { bloque(); }
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ELSE:{
       jj_consume_token(ELSE);
-      bloque();
+if (resp==false) { bloque(); }
       break;
       }
     default:
@@ -902,10 +904,10 @@ try
 	   jj_la1_0 = new int[] {0x0,0x0,0x3ffe00,0x3ffe00,0x0,0x0,0x80000000,0x0,0x0,0x0,0x0,0x0,0x3f800,0x38000000,0x78000000,0x800000,0x241e0,0x241e0,0x241e1,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x200400,0x300,0x0,0x0,0xf000,0xf0000,0x7f,0xb800,0xb000,0xb000,0x2000d000,0xf0000,0x0,0x0,0x0,0x0,0x1300,0x1300,0x1300,0xc00000,0xc00000,};
+	   jj_la1_1 = new int[] {0x200400,0x300,0x0,0x0,0xf000,0xf0000,0x7f,0xb800,0x0,0xb800,0x2000d000,0xf0000,0x0,0x0,0x0,0x0,0x1300,0x1300,0x1300,0xc00000,0xc00000,};
 	}
 	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
 	}
 
   /** Constructor with InputStream. */

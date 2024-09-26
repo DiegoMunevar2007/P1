@@ -321,7 +321,7 @@ void moves():
   				  {world.right(); }
   				}
   		)
- ( "," < FORWARD > {if (world.facingNorth())
+ ( "," (< FORWARD > {if (world.facingNorth())
   								 {world.up(); }
   								 else if (world.facingEast())
 								 {world.right(); }
@@ -356,7 +356,7 @@ void moves():
   				  {world.up(); }
   				  else if (world.facingWest())
   				  {world.right(); }
-  				} )* ")"";"
+  				}) )* ")"";"
 }
 boolean isblocked():
 {Point pos = world.getPosition();
@@ -372,10 +372,12 @@ boolean isblocked():
 | < BACK > {pos.move((int)pos.getX(), (int)pos.getY()-1);
   								return world.isBlocked(pos); }) ")"
 }
-void isfacing():
-{ }
+boolean isfacing():
+{boolean resp =false; }
 {
-  < ISFACING > "("(< NORTH > { } |< SOUTH > { } | < EAST > { } | < WEST > { } )  ")"
+  < ISFACING > "("(< NORTH > {resp= world.facingNorth(); } |< SOUTH > { resp = world.facingNorth(); } | < EAST > {resp = world.facingNorth(); } | < WEST > {resp = world.facingNorth(); } )  ")"
+  {return resp; }
+  
 }
 boolean zero():
 { }	
@@ -388,20 +390,23 @@ void safeexe():
   < SAFEEXE > "(" (walk() | jump() | drop() | pick() | grab() | letgo()| pop() ) ")" ";"
 }
 boolean condicion():
-{ }
-{
-  (isblocked() | isfacing() | zero() )
+{boolean resp = false; }
+{ //TODO: Saber si este tipo de sintaxis es valida juas juas 
+  (resp=isblocked() | resp=isfacing() | resp=zero() )
+  {return resp; }
 }
 boolean not():
-{boolean resp = false; }
 {
- < NOT > "(" { resp=condicion(); return !resp; } ")"
+    boolean resp = false;
+}
+{
+    <NOT> "(" { resp = condicion(); } ")" { return !resp; }
 }
 
 void condicional():
-{ }
+{boolean resp= false; }
 {
-  (< IF >)"("( not() | condicion() ) ")" (< THEN > bloque()) (< ELSE > bloque())? < FI >
+  (< IF >)"("( resp=not() | resp=condicion() ) ")" (< THEN > { if (resp==true) { bloque(); } } ) (< ELSE > { if (resp==false) { bloque(); } } )? < FI >
 }
 
 
