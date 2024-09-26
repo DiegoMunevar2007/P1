@@ -229,7 +229,8 @@ void turntothe():
 { }
 {
   (< TURNTOTHE >) "("
-  (    <NORTH> {if (world.facingWest())
+  (
+    <NORTH> {if (world.facingWest())
   			{ world.turnRight(); }
   			else if (world.facingSouth())
   			{ world.turnRight(); world.turnRight();  }
@@ -266,11 +267,11 @@ int valor():
 {
   < VALOR > { numero= Integer.parseInt(token.image); return numero; }
 | < SIZE > { numero = world.getN(); return numero; }
-| < MYX> { numero = (int)world.getPosition().getX(); }
-| < MYY> { numero = (int)world.getPosition().getY(); }
-| < MYCHIPS> { numero = world.getMyChips(); }
-| < MYBALLOONS> { numero = world.getMyBalloons(); }
-| < BALLOONSHERE> { numero = world.countBalloons(); }
+| < MYX> { numero = (int)world.getPosition().getX(); return numero; }
+| < MYY> { numero = (int)world.getPosition().getY(); return numero; }
+| < MYCHIPS> { numero = world.getMyChips(); return numero; }
+| < MYBALLOONS> { numero = world.getMyBalloons(); return numero;}
+| < BALLOONSHERE> { numero = world.countBalloons(); return numero; }
 | < CHIPSHERE> { } // Pendiente porque no hay alguna funcion para poder contar las chips en una celda
 // TODO: roomForChips
 }
@@ -376,26 +377,27 @@ void isfacing():
 {
   < ISFACING > "("(< NORTH > { } |< SOUTH > { } | < EAST > { } | < WEST > { } )  ")"
 }
-void zero():
-{ }
+boolean zero():
+{ }	
 {
-  < ZERO > "("< VALOR > ")"
+  < ZERO > "(" { return valor()==0; } ")"
 }
 void safeexe():
 { }
 {
   < SAFEEXE > "(" (walk() | jump() | drop() | pick() | grab() | letgo()| pop() ) ")" ";"
 }
-void condicion():
+boolean condicion():
 { }
 {
   (isblocked() | isfacing() | zero() )
 }
-void not():
-{ }
+boolean not():
+{boolean resp = false; }
 {
- < NOT > "(" condicion() ")"
+ < NOT > "(" { resp=condicion(); return !resp; } ")"
 }
+
 void condicional():
 { }
 {
@@ -405,13 +407,13 @@ void condicional():
 
 
 void walk():
-{int numero = 0;}
+{int numero;}
 {
  <WALK> "(" { numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";}")" ";"
 }
 
 void jump():
-{}
+{int numero;}
 {
  <JUMP> "("{ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";} ")"";"
 }
