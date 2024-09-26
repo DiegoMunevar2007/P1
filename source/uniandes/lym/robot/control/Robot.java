@@ -654,42 +654,42 @@ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";
     jj_consume_token(63);
 }
 
-  final public void drop() throws ParseException {
+  final public void drop() throws ParseException {int numero;
     jj_consume_token(DROP);
     jj_consume_token(61);
-    jj_consume_token(VALOR);
+numero = valor(); world.putChips(numero);
     jj_consume_token(62);
     jj_consume_token(63);
 }
 
-  final public void pick() throws ParseException {
+  final public void pick() throws ParseException {int numero;
     jj_consume_token(PICK);
     jj_consume_token(61);
-    jj_consume_token(VALOR);
+numero = valor(); world.pickChips(numero);
     jj_consume_token(62);
     jj_consume_token(63);
 }
 
-  final public void grab() throws ParseException {
+  final public void grab() throws ParseException {int numero;
     jj_consume_token(GRAB);
     jj_consume_token(61);
-    jj_consume_token(VALOR);
+numero = valor(); world.grabBalloons(numero);
     jj_consume_token(62);
     jj_consume_token(63);
 }
 
-  final public void letgo() throws ParseException {
+  final public void letgo() throws ParseException {int numero;
     jj_consume_token(LETGO);
     jj_consume_token(61);
-    jj_consume_token(VALOR);
+numero = valor(); world.putBalloons(numero);
     jj_consume_token(62);
     jj_consume_token(63);
 }
 
-  final public void pop() throws ParseException {
+  final public void pop() throws ParseException {int numero;
     jj_consume_token(POP);
     jj_consume_token(61);
-    jj_consume_token(VALOR);
+numero = valor(); world.popBalloons(numero);
     jj_consume_token(62);
     jj_consume_token(63);
 }

@@ -409,8 +409,6 @@ void condicional():
   (< IF >)"("( resp=not() | resp=condicion() ) ")" (< THEN > { if (resp==true) { bloque(); } } ) (< ELSE > { if (resp==false) { bloque(); } } )? < FI >
 }
 
-
-
 void walk():
 {int numero;}
 {
@@ -423,29 +421,29 @@ void jump():
  <JUMP> "("{ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";} ")"";"
 }
 void drop():
-{}
+{int numero;}
 {
- <DROP> "(" <VALOR>")" ";"
+ <DROP> "(" {numero = valor(); world.putChips(numero); } ")" ";"
 }
 void pick():
-{}
+{int numero;}
 {
- <PICK> "(" <VALOR>")" ";"
+ <PICK> "(" { numero = valor(); world.pickChips(numero); }")" ";"
 }
 void grab():
-{}
+{int numero;}
 {
- <GRAB> "(" <VALOR>")" ";"
+ <GRAB> "(" { numero = valor(); world.grabBalloons(numero); }")" ";"
 }
 void letgo():
-{}
+{int numero;}
 {
- <LETGO> "(" <VALOR>")" ";"
+ <LETGO> "(" { numero = valor(); world.putBalloons(numero); }")" ";"
 }
 void pop():
-{}
+{int numero;}
 {
- <POP> "(" <VALOR>")"";"
+ <POP> "(" { numero = valor(); world.popBalloons(numero); }")"";"
 }
 
 
