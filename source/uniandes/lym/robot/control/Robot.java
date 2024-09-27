@@ -15,8 +15,8 @@ public class Robot implements RobotConstants {
 
 
         private RobotWorldDec world;
-
-
+        private static boolean condicion=true;
+        private static boolean cambio=false;
         void setWorld(RobotWorld w) {
                 world = (RobotWorldDec) w;
         }
@@ -166,42 +166,46 @@ public class Robot implements RobotConstants {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case RIGHT:{
       jj_consume_token(RIGHT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                           { world.turnRight(); }
                                           else if (world.facingWest())
                                           { world.turnRight(); world.turnRight(); }
                                           else if (world.facingSouth())
                                           { world.turnRight(); world.turnRight(); world.turnRight(); }
+                                         }
       break;
       }
     case LEFT:{
       jj_consume_token(LEFT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                   { world.turnRight(); world.turnRight(); world.turnRight(); }
                                   else if (world.facingEast())
                                   { world.turnRight(); world.turnRight(); }
                                   else if (world.facingSouth())
                                   { world.turnRight(); }
+                                }
       break;
       }
     case BACK:{
       jj_consume_token(BACK);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                 { world.turnRight(); world.turnRight();  }
                                 else if (world.facingEast())
                                 { world.turnRight(); }
                                 else if (world.facingWest())
                                 { world.turnRight(); world.turnRight(); world.turnRight();  }
+                    }
       break;
       }
     case FRONT:{
       jj_consume_token(FRONT);
-if (world.facingEast())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingEast())
                                 {world.turnRight(); world.turnRight(); world.turnRight(); }
                                 else if (world.facingSouth())
                                 {world.turnRight(); world.turnRight(); }
                                 else if (world.facingWest())
                                 { world.turnRight();}
+             }
       break;
       }
     default:
@@ -327,7 +331,7 @@ numero = world.countBalloons(); {if ("" != null) return numero;}
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case FORWARD:{
       jj_consume_token(FORWARD);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                                                  {world.up(); }
                                                                  else if (world.facingEast())
                                                                  {world.right(); }
@@ -335,11 +339,12 @@ if (world.facingNorth())
                                                                  {world.down(); }
                                                                  else if (world.facingWest())
                                                                  {world.left(); }
+                                                                }
       break;
       }
     case RIGHT:{
       jj_consume_token(RIGHT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) {  if (world.facingNorth())
                                   {world.right(); }
                                   else if (world.facingEast())
                                   {world.down(); }
@@ -347,11 +352,12 @@ if (world.facingNorth())
                                   {world.left(); }
                                   else if (world.facingWest())
                                   {world.up(); }
+                                }
       break;
       }
     case LEFT:{
       jj_consume_token(LEFT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                   {world.left(); }
                                   else if (world.facingEast())
                                   {world.up(); }
@@ -359,11 +365,13 @@ if (world.facingNorth())
                                   {world.right(); }
                                   else if (world.facingWest())
                                   {world.down(); }
+                                }
       break;
       }
     case BACK:{
       jj_consume_token(BACK);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) {
+                                  if (world.facingNorth())
                                   {world.down(); }
                                   else if (world.facingEast())
                                   {world.left(); }
@@ -371,6 +379,7 @@ if (world.facingNorth())
                                   {world.up(); }
                                   else if (world.facingWest())
                                   {world.right(); }
+                                }
       break;
       }
     default:
@@ -393,7 +402,7 @@ if (world.facingNorth())
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case FORWARD:{
         jj_consume_token(FORWARD);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                                                  {world.up(); }
                                                                  else if (world.facingEast())
                                                                  {world.right(); }
@@ -401,11 +410,12 @@ if (world.facingNorth())
                                                                  {world.down(); }
                                                                  else if (world.facingWest())
                                                                  {world.left(); }
+                                                                }
         break;
         }
       case RIGHT:{
         jj_consume_token(RIGHT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                   {world.right(); }
                                   else if (world.facingEast())
                                   {world.down(); }
@@ -413,11 +423,12 @@ if (world.facingNorth())
                                   {world.left(); }
                                   else if (world.facingWest())
                                   {world.up(); }
+                                }
         break;
         }
       case LEFT:{
         jj_consume_token(LEFT);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                   {world.left(); }
                                   else if (world.facingEast())
                                   {world.up(); }
@@ -425,11 +436,12 @@ if (world.facingNorth())
                                   {world.right(); }
                                   else if (world.facingWest())
                                   {world.down(); }
+                                }
         break;
         }
       case BACK:{
         jj_consume_token(BACK);
-if (world.facingNorth())
+if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
                                   {world.down(); }
                                   else if (world.facingEast())
                                   {world.left(); }
@@ -437,6 +449,7 @@ if (world.facingNorth())
                                   {world.up(); }
                                   else if (world.facingWest())
                                   {world.right(); }
+                                }
         break;
         }
       default:
@@ -499,17 +512,17 @@ resp= world.facingNorth();
       }
     case SOUTH:{
       jj_consume_token(SOUTH);
-resp = world.facingNorth();
+resp = world.facingSouth();
       break;
       }
     case EAST:{
       jj_consume_token(EAST);
-resp = world.facingNorth();
+resp = world.facingEast();
       break;
       }
     case WEST:{
       jj_consume_token(WEST);
-resp = world.facingNorth();
+resp = world.facingWest();
       break;
       }
     default:
@@ -603,7 +616,7 @@ resp = condicion();
     throw new Error("Missing return statement in function");
 }
 
-  final public void condicional() throws ParseException {boolean resp= false;
+  final public void condicional() throws ParseException {boolean resp = false;
     jj_consume_token(IF);
     jj_consume_token(61);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -624,11 +637,34 @@ resp = condicion();
     }
     jj_consume_token(62);
     jj_consume_token(THEN);
-if (resp==true) { bloque(); }
+if (resp) {
+      cambio=true;
+      bloque();
+      cambio=false;
+       // Execute bloque if condition is true
+    } else {
+      // Parsear bloque sin ejecutar
+      condicion=false;
+          cambio=true;
+      bloque();
+      condicion=true;
+      cambio=false;
+    }
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case ELSE:{
       jj_consume_token(ELSE);
-if (resp==false) { bloque(); }
+if (!resp) {
+      cambio=true;
+      bloque();
+      cambio=false;
+    } else {
+      // Parsear bloque sin ejecutar
+          condicion=false;
+          cambio=true;
+      bloque();
+      condicion=true;
+      cambio=false;
+    }
       break;
       }
     default:
@@ -641,7 +677,8 @@ if (resp==false) { bloque(); }
   final public void walk() throws ParseException {int numero;
     jj_consume_token(WALK);
     jj_consume_token(61);
-numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";
+if (condicion==true && cambio==false || condicion==true && cambio==true) {
+   numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";}
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -649,7 +686,8 @@ numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";
   final public void jump() throws ParseException {int numero;
     jj_consume_token(JUMP);
     jj_consume_token(61);
-numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";
+if (condicion==true && cambio==false || condicion==true && cambio==true) {
+   numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP"; }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -657,7 +695,8 @@ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";
   final public void drop() throws ParseException {int numero;
     jj_consume_token(DROP);
     jj_consume_token(61);
-numero = valor(); world.putChips(numero);
+if (condicion==true && cambio==false || condicion==true && cambio==true)
+        {numero = valor(); world.putChips(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -665,7 +704,7 @@ numero = valor(); world.putChips(numero);
   final public void pick() throws ParseException {int numero;
     jj_consume_token(PICK);
     jj_consume_token(61);
-numero = valor(); world.pickChips(numero);
+if (condicion==true && cambio==false || condicion==true && cambio==true) {  numero = valor(); world.pickChips(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -673,7 +712,8 @@ numero = valor(); world.pickChips(numero);
   final public void grab() throws ParseException {int numero;
     jj_consume_token(GRAB);
     jj_consume_token(61);
-numero = valor(); world.grabBalloons(numero);
+if (condicion==true && cambio==false || condicion==true && cambio==true)
+                                { numero = valor(); world.grabBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -681,7 +721,8 @@ numero = valor(); world.grabBalloons(numero);
   final public void letgo() throws ParseException {int numero;
     jj_consume_token(LETGO);
     jj_consume_token(61);
-numero = valor(); world.putBalloons(numero);
+if (condicion==true && cambio==false || condicion==true && cambio==true)
+                                {  numero = valor(); world.putBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -689,7 +730,8 @@ numero = valor(); world.putBalloons(numero);
   final public void pop() throws ParseException {int numero;
     jj_consume_token(POP);
     jj_consume_token(61);
-numero = valor(); world.popBalloons(numero);
+if (condicion==true && cambio==false || condicion==true && cambio==true)
+                                {  numero = valor(); world.popBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }

@@ -38,8 +38,8 @@ public class Robot
 
 
 	private RobotWorldDec world;
-	
-	
+	private static boolean condicion=true;
+	private static boolean cambio=false;
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
 	}
@@ -194,34 +194,38 @@ void turntomy():
 { }
 {
   < TURNTOMY >
-  "(" (< RIGHT > { if (world.facingNorth())
+  "(" (< RIGHT > {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   					  { world.turnRight(); }
   					  else if (world.facingWest())
   					  { world.turnRight(); world.turnRight(); }
   					  else if (world.facingSouth())
   					  { world.turnRight(); world.turnRight(); world.turnRight(); }
   					 }
-  | < LEFT > { if (world.facingNorth())
+  				}
+  | < LEFT > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				  { world.turnRight(); world.turnRight(); world.turnRight(); }
   				  else if (world.facingEast())
   				  { world.turnRight(); world.turnRight(); }
   				  else if (world.facingSouth())
   				  { world.turnRight(); }
+  				}
   			 }
-  |< BACK > {if (world.facingNorth())
+  |< BACK > {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				{ world.turnRight(); world.turnRight();  }
   				else if (world.facingEast())
   				{ world.turnRight(); }
   				else if (world.facingWest())
   				{ world.turnRight(); world.turnRight(); world.turnRight();  }
   		    }
-  | < FRONT > { if (world.facingEast())
+  		  }
+  | < FRONT > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingEast())
   				{world.turnRight(); world.turnRight(); world.turnRight(); }
   				else if (world.facingSouth())
   				{world.turnRight(); world.turnRight(); }
   				else if (world.facingWest())
   				{ world.turnRight();}
              }
+           }
   )                   
    ")"";"
 } 
@@ -284,7 +288,7 @@ void moves():
 {int perspectiva= world.getFacing(); }
 // Preguntar sobre que significa moves
 {
-  (< MOVES >) "(" (< FORWARD > {if (world.facingNorth())
+  (< MOVES >) "(" (< FORWARD > {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   								 {world.up(); }
   								 else if (world.facingEast())
 								 {world.right(); }
@@ -292,8 +296,8 @@ void moves():
 								 {world.down(); }
 								 else if (world.facingWest())
 								 {world.left(); }
-  								}
-| < RIGHT > { if (world.facingNorth())
+  								} }
+| < RIGHT > {if (condicion==true && cambio==false || condicion==true && cambio==true) {  if (world.facingNorth())
   				  {world.right(); }
   				  else if (world.facingEast())
   				  {world.down(); }
@@ -301,8 +305,8 @@ void moves():
   				  {world.left(); }
   				  else if (world.facingWest())
   				  {world.up(); }
-  				}
-| < LEFT > { if (world.facingNorth())
+  				} }
+| < LEFT > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				  {world.left(); }
   				  else if (world.facingEast())
   				  {world.up(); }
@@ -310,8 +314,9 @@ void moves():
   				  {world.right(); }
   				  else if (world.facingWest())
   				  {world.down(); }
-  				}
-| < BACK > { if (world.facingNorth())
+  				} }
+| < BACK > {if (condicion==true && cambio==false || condicion==true && cambio==true) {
+  				  if (world.facingNorth())
   				  {world.down(); }
   				  else if (world.facingEast())
   				  {world.left(); }
@@ -319,9 +324,11 @@ void moves():
   				  {world.up(); }
   				  else if (world.facingWest())
   				  {world.right(); }
-  				}
+  				} }
   		)
- ( "," (< FORWARD > {if (world.facingNorth())
+
+  		
+ ( "," (< FORWARD > {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   								 {world.up(); }
   								 else if (world.facingEast())
 								 {world.right(); }
@@ -329,8 +336,8 @@ void moves():
 								 {world.down(); }
 								 else if (world.facingWest())
 								 {world.left(); }
-  								}
-| < RIGHT > { if (world.facingNorth())
+  								} }
+| < RIGHT > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				  {world.right(); }
   				  else if (world.facingEast())
   				  {world.down(); }
@@ -338,8 +345,8 @@ void moves():
   				  {world.left(); }
   				  else if (world.facingWest())
   				  {world.up(); }
-  				}
-| < LEFT > { if (world.facingNorth())
+  				} }
+| < LEFT > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				  {world.left(); }
   				  else if (world.facingEast())
   				  {world.up(); }
@@ -347,8 +354,8 @@ void moves():
   				  {world.right(); }
   				  else if (world.facingWest())
   				  {world.down(); }
-  				}
-| < BACK > { if (world.facingNorth())
+  				} }   
+| < BACK > { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
   				  {world.down(); }
   				  else if (world.facingEast())
   				  {world.left(); }
@@ -356,7 +363,7 @@ void moves():
   				  {world.up(); }
   				  else if (world.facingWest())
   				  {world.right(); }
-  				}) )* ")"";"
+  				} } ) )* ")"";"
 }
 boolean isblocked():
 {Point pos = world.getPosition();
@@ -375,7 +382,7 @@ boolean isblocked():
 boolean isfacing():
 {boolean resp =false; }
 {
-  < ISFACING > "("(< NORTH > {resp= world.facingNorth(); } |< SOUTH > { resp = world.facingNorth(); } | < EAST > {resp = world.facingNorth(); } | < WEST > {resp = world.facingNorth(); } )  ")"
+  < ISFACING > "("(< NORTH > {resp= world.facingNorth(); } |< SOUTH > { resp = world.facingSouth(); } | < EAST > {resp = world.facingEast(); } | < WEST > {resp = world.facingWest(); } )  ")"
   {return resp; }
   
 }
@@ -403,47 +410,88 @@ boolean not():
     <NOT> "(" { resp = condicion(); } ")" { return !resp; }
 }
 
-void condicional():
-{boolean resp= false; }
+void condicional() :
 {
-  (< IF >)"("( resp=not() | resp=condicion() ) ")" (< THEN > { if (resp==true) { bloque(); } } ) (< ELSE > { if (resp==false) { bloque(); } } )? < FI >
+  boolean resp = false;
 }
+{
+  <IF> "(" (resp = not() | resp = condicion()) ")" 
+  <THEN> 
+  {
+    if (resp) {
+      cambio=true;
+      bloque(); 
+      cambio=false;
+       // Execute bloque if condition is true
+    } else {
+      // Parsear bloque sin ejecutar
+      condicion=false;
+	  cambio=true;
+      bloque();
+      condicion=true;
+      cambio=false;
+    }
+  }
+  ( <ELSE> 
+  {
+    if (!resp) {
+      cambio=true;
+      bloque(); 
+      cambio=false;
+    } else {
+      // Parsear bloque sin ejecutar
+	  condicion=false;
+	  cambio=true;
+      bloque();
+      condicion=true;
+      cambio=false;
+    }
+  })?
+  <FI>
+}
+
 
 void walk():
 {int numero;}
 {
- <WALK> "(" { numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";}")" ";"
+ <WALK> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true) {
+   numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";} }")" ";"
 }
 
 void jump():
 {int numero;}
 {
- <JUMP> "("{ numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP";} ")"";"
+ <JUMP> "("{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
+   numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP"; }} ")"";"
 }
 void drop():
 {int numero;}
 {
- <DROP> "(" {numero = valor(); world.putChips(numero); } ")" ";"
+ <DROP> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 	{numero = valor(); world.putChips(numero); } } ")" ";"
 }
 void pick():
 {int numero;}
 {
- <PICK> "(" { numero = valor(); world.pickChips(numero); }")" ";"
+ <PICK> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true) {  numero = valor(); world.pickChips(numero); }}")" ";"
 }
 void grab():
 {int numero;}
 {
- <GRAB> "(" { numero = valor(); world.grabBalloons(numero); }")" ";"
+ <GRAB> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{ numero = valor(); world.grabBalloons(numero); }}")" ";"
 }
 void letgo():
 {int numero;}
 {
- <LETGO> "(" { numero = valor(); world.putBalloons(numero); }")" ";"
+ <LETGO> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{  numero = valor(); world.putBalloons(numero); } }")" ";"
 }
 void pop():
 {int numero;}
 {
- <POP> "(" { numero = valor(); world.popBalloons(numero); }")"";"
+ <POP> "(" {if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{  numero = valor(); world.popBalloons(numero); } }")"";"
 }
 
 
