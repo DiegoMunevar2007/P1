@@ -677,8 +677,9 @@ if (!resp) {
   final public void walk() throws ParseException {int numero;
     jj_consume_token(WALK);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true) {
-   numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";}
+    world.moveForward(numero, false); salida = "Command: WALK";}
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -686,8 +687,9 @@ if (condicion==true && cambio==false || condicion==true && cambio==true) {
   final public void jump() throws ParseException {int numero;
     jj_consume_token(JUMP);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true) {
-   numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP"; }
+    world.moveForward(numero, false); salida = "Command: JUMP"; }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -695,8 +697,9 @@ if (condicion==true && cambio==false || condicion==true && cambio==true) {
   final public void drop() throws ParseException {int numero;
     jj_consume_token(DROP);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true)
-        {numero = valor(); world.putChips(numero); }
+        { world.putChips(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -704,7 +707,8 @@ if (condicion==true && cambio==false || condicion==true && cambio==true)
   final public void pick() throws ParseException {int numero;
     jj_consume_token(PICK);
     jj_consume_token(61);
-if (condicion==true && cambio==false || condicion==true && cambio==true) {  numero = valor(); world.pickChips(numero); }
+numero = valor();
+if (condicion==true && cambio==false || condicion==true && cambio==true) { world.pickChips(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -712,8 +716,9 @@ if (condicion==true && cambio==false || condicion==true && cambio==true) {  nume
   final public void grab() throws ParseException {int numero;
     jj_consume_token(GRAB);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true)
-                                { numero = valor(); world.grabBalloons(numero); }
+                                { world.grabBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -721,8 +726,9 @@ if (condicion==true && cambio==false || condicion==true && cambio==true)
   final public void letgo() throws ParseException {int numero;
     jj_consume_token(LETGO);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true)
-                                {  numero = valor(); world.putBalloons(numero); }
+                                {  world.putBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
@@ -730,8 +736,9 @@ if (condicion==true && cambio==false || condicion==true && cambio==true)
   final public void pop() throws ParseException {int numero;
     jj_consume_token(POP);
     jj_consume_token(61);
+numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true)
-                                {  numero = valor(); world.popBalloons(numero); }
+                                {  world.popBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }

@@ -454,44 +454,44 @@ void condicional() :
 void walk():
 {int numero;}
 {
- <WALK> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true) {
-   numero = valor(); world.moveForward(numero, false); salida = "Command: WALK";} }")" ";"
+ <WALK> "(" {numero = valor(); }{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
+    world.moveForward(numero, false); salida = "Command: WALK";} }")" ";"
 }
 
 void jump():
 {int numero;}
 {
- <JUMP> "("{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-   numero = valor(); world.moveForward(numero, false); salida = "Command: JUMP"; }} ")"";"
+ <JUMP>  "(" {numero = valor(); }{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
+    world.moveForward(numero, false); salida = "Command: JUMP"; }} ")"";"
 }
 void drop():
 {int numero;}
 {
- <DROP> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
- 	{numero = valor(); world.putChips(numero); } } ")" ";"
+ <DROP> "(" {numero = valor(); } { if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 	{ world.putChips(numero); } } ")" ";"
 }
 void pick():
 {int numero;}
 {
- <PICK> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true) {  numero = valor(); world.pickChips(numero); }}")" ";"
+ <PICK> "("{numero = valor(); } { if (condicion==true && cambio==false || condicion==true && cambio==true) { world.pickChips(numero); }}")" ";"
 }
 void grab():
 {int numero;}
 {
- <GRAB> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
- 				{ numero = valor(); world.grabBalloons(numero); }}")" ";"
+ <GRAB> "(" {numero = valor(); }{ if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{ world.grabBalloons(numero); }}")" ";"
 }
 void letgo():
 {int numero;}
 {
- <LETGO> "(" { if (condicion==true && cambio==false || condicion==true && cambio==true)
- 				{  numero = valor(); world.putBalloons(numero); } }")" ";"
+ <LETGO> "(" {numero = valor(); } { if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{  world.putBalloons(numero); } }")" ";"
 }
 void pop():
 {int numero;}
 {
- <POP> "(" {if (condicion==true && cambio==false || condicion==true && cambio==true)
- 				{  numero = valor(); world.popBalloons(numero); } }")"";"
+ <POP> "(" {numero = valor(); } {if (condicion==true && cambio==false || condicion==true && cambio==true)
+ 				{  world.popBalloons(numero); } }")"";"
 }
 
 
