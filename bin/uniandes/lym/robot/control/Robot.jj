@@ -491,7 +491,7 @@ void pop():
 {int numero;}
 {
  <POP> "(" {numero = valor(); } {if (condicion==true && cambio==false || condicion==true && cambio==true)
- 				{  world.popBalloons(numero); } }")"";"
+ 				{   world.popBalloons(numero); } }")"";"
 }
 
 

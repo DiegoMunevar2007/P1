@@ -738,7 +738,7 @@ if (condicion==true && cambio==false || condicion==true && cambio==true)
     jj_consume_token(61);
 numero = valor();
 if (condicion==true && cambio==false || condicion==true && cambio==true)
-                                {  world.popBalloons(numero); }
+                                {   world.popBalloons(numero); }
     jj_consume_token(62);
     jj_consume_token(63);
 }
