@@ -391,45 +391,49 @@ boolean zero():
 {
   < ZERO > "(" { return valor()==0; } ")"
 }
-void safeexe():
+void safeexecution():
 { }
-{
-< SAFEEXE > "(" ( { try { walk(); }
-				catch (Exception e) {
+{ ( { try { walk(); }
+				catch (Error e) {
 					System.out.println("Error en walk, no se ejecutó");
 				}
 		}
 | { try { jump(); }
-		catch (Exception e) {
+		catch (Error e) {
 			System.out.println("Error en jump, no se ejecutó");
 		}
  }
  | { try { drop(); }
-			catch (Exception e) {
+			catch (Error e) {
 				System.out.println("Error en drop, no se ejecutó");
 			}
  }
  | { try { pick(); }
-			catch (Exception e) {
+			catch (Error e) {
 				System.out.println("Error en pick, no se ejecutó");
 			}
  }
  | { try { grab(); }
-			catch (Exception e) {
+			catch (Error e) {
 				System.out.println("Error en grab, no se ejecutó");
 			}
  }
  | { try { letgo(); }
-			catch (Exception e) {
+			catch (Error e) {
 				System.out.println("Error en letgo, no se ejecutó");
 			}
  }
  | { try { pop(); }
-			catch (Exception e) {
+			catch (Error e) {
 				System.out.println("Error en pop, no se ejecutó");
 			}
  }
- ) ")" ";"
+ )  }
+  
+void safeexe():
+{ }
+{
+< SAFEEXE > "(" safeexecution() ")" ";" (")" ";")?
 }
 boolean condicion():
 {boolean resp = false; }
