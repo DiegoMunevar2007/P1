@@ -31,6 +31,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public class Robot 
@@ -40,6 +42,7 @@ public class Robot
 	private RobotWorldDec world;
 	private static boolean condicion=true;
 	private static boolean cambio=false;
+	private static Map<String,Integer > variables = new HashMap<String,Integer >(); 
 	void setWorld(RobotWorld w) {
 		world = (RobotWorldDec) w;	
 	}
@@ -112,6 +115,7 @@ TOKEN [IGNORE_CASE] : /* OPERATORS */
 | < ROOMFORCHIPS: "ROOMFORCHIPS" >
 | < EXEC : "EXEC"  >
 | < NEW :  "NEW" >
+| < VAR: "VAR" >
 | < MACRO: "MACRO" >
 | < FORWARD: "FORWARD" >
 |< RIGHT: "RIGHT" >
@@ -158,9 +162,38 @@ void exec():
 	< EXEC > bloque()  
 }
 void var():
-{ }
+{String nombreVariable = "";
+int numero;}
 {
-  <ELEMENTO > "=" < ELEMENTO > 
+  < VAR >
+  <ELEMENTO >
+  {
+    try {
+      nombreVariable = token.image;
+    }
+    catch(Exception e) {
+    }
+  }  "="
+  {
+    try { numero=valor(); variables.put(nombreVariable,numero); }
+    catch (Exception e) { }} 
+}
+int obtenerVar() :
+{ String nombreVariable = ""; int valorVariable; }
+{
+  <ELEMENTO>
+  {
+    try {
+      nombreVariable = token.image;
+      if (variables.containsKey(nombreVariable)) {
+        valorVariable = variables.get(nombreVariable);
+        return valorVariable;
+      } else {
+        System.out.println("Variable " + nombreVariable + " no esta definida.");
+      }
+    }
+    catch(Exception e) { }
+  }
 }
 void macro():
 { }
@@ -269,14 +302,19 @@ void turntothe():
 int valor():
 { int numero= 0;}
 {
-  < VALOR > { numero= Integer.parseInt(token.image); return numero; }
+(
+	< VALOR > { numero = Integer.parseInt(token.image); return numero; }
 | < SIZE > { numero = world.getN(); return numero; }
-| < MYX> { numero = (int)world.getPosition().getX(); return numero; }
-| < MYY> { numero = (int)world.getPosition().getY(); return numero; }
-| < MYCHIPS> { numero = world.getMyChips(); return numero; }
-| < MYBALLOONS> { numero = world.getMyBalloons(); return numero;}
-| < BALLOONSHERE> { numero = world.countBalloons(); return numero; }
-| < CHIPSHERE> { } // Pendiente porque no hay alguna funcion para poder contar las chips en una celda
+| < MYX > { numero = (int) world.getPosition().getX(); return numero; }
+| < MYY > { numero = (int) world.getPosition().getY(); return numero; }
+| < MYCHIPS > { numero = world.getMyChips(); return numero; }
+| < MYBALLOONS > { numero = world.getMyBalloons(); return numero; }
+| < BALLOONSHERE > { numero = world.countBalloons(); return numero; }
+| < CHIPSHERE > { numero = world.chipsToPick(); return numero; } // Pendiente porque no hay alguna funcion para poder contar las chips en una celda
+| < ROOMFORCHIPS > { numero = world.freeSpacesForChips(); return numero; }
+)
+| {System.out.println("hola");numero=obtenerVar(); return numero;}
+
 // TODO: roomForChips
 }
 void nop():

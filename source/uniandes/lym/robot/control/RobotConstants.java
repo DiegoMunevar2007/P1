@@ -85,37 +85,39 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int NEW = 41;
   /** RegularExpression Id. */
-  int MACRO = 42;
+  int VAR = 42;
   /** RegularExpression Id. */
-  int FORWARD = 43;
+  int MACRO = 43;
   /** RegularExpression Id. */
-  int RIGHT = 44;
+  int FORWARD = 44;
   /** RegularExpression Id. */
-  int LEFT = 45;
+  int RIGHT = 45;
   /** RegularExpression Id. */
-  int FRONT = 46;
+  int LEFT = 46;
   /** RegularExpression Id. */
-  int BACK = 47;
+  int FRONT = 47;
   /** RegularExpression Id. */
-  int NORTH = 48;
+  int BACK = 48;
   /** RegularExpression Id. */
-  int EAST = 49;
+  int NORTH = 49;
   /** RegularExpression Id. */
-  int WEST = 50;
+  int EAST = 50;
   /** RegularExpression Id. */
-  int SOUTH = 51;
+  int WEST = 51;
   /** RegularExpression Id. */
-  int FI = 52;
+  int SOUTH = 52;
   /** RegularExpression Id. */
-  int ELEMENTO = 53;
+  int FI = 53;
   /** RegularExpression Id. */
-  int BALLOONS = 54;
+  int ELEMENTO = 54;
   /** RegularExpression Id. */
-  int CHIPS = 55;
+  int BALLOONS = 55;
   /** RegularExpression Id. */
-  int NUM = 56;
+  int CHIPS = 56;
   /** RegularExpression Id. */
-  int DIGIT = 57;
+  int NUM = 57;
+  /** RegularExpression Id. */
+  int DIGIT = 58;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -164,6 +166,7 @@ public interface RobotConstants {
     "\"ROOMFORCHIPS\"",
     "\"EXEC\"",
     "\"NEW\"",
+    "\"VAR\"",
     "\"MACRO\"",
     "\"FORWARD\"",
     "\"RIGHT\"",
