@@ -31,6 +31,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -151,7 +153,7 @@ void inicial() :
 {}
 {
  (
-   exec()| (< NEW > (var() | macro()))
+   exec()| (< NEW > (var() | definirMacro()))
  )
 }
 
@@ -194,11 +196,6 @@ int obtenerVar() :
     }
     catch(Exception e) { }
   }
-}
-void macro():
-{ }
-{
-	< MACRO >
 }
 void bloque():
 {}
@@ -499,7 +496,7 @@ void condicional() :
       cambio=true;
       bloque(); 
       cambio=false;
-       // Execute bloque if condition is true
+       // Ejecutar bloque si condition es true
     } else {
       // Parsear bloque sin ejecutar
       condicion=false;
@@ -527,6 +524,23 @@ void condicional() :
   <FI>
 }
 
+void definirMacro():
+{String nombre;
+List <String > parametrosLista = new ArrayList< >();
+List<String > acciones = new ArrayList< >(); }
+{
+< MACRO > <ELEMENTO > { nombre= token.image; } "(" (parametrosLista = definirParametros())? ")"
+}
+List <String > definirParametros():
+{List<String > parametros= new ArrayList < >();
+String parametro; }
+{
+  (    (      < ELEMENTO > {parametro = token.image; parametros.add(parametro); }
+    )("," < ELEMENTO > {parametro = token.image; parametros.add(parametro); })*
+  )
+  {
+  	return parametros; }
+}
 
 void walk():
 {int numero;}

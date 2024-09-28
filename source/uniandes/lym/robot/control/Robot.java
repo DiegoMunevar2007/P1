@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.io.*;
 import java.util.Vector;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +42,7 @@ public class Robot implements RobotConstants {
         break;
         }
       case MACRO:{
-        macro();
+        definirMacro();
         break;
         }
       default:
@@ -89,10 +91,6 @@ try {
     }
     catch(Exception e) { }
     throw new Error("Missing return statement in function");
-}
-
-  final public void macro() throws ParseException {
-    jj_consume_token(MACRO);
 }
 
   final public void bloque() throws ParseException {
@@ -672,7 +670,7 @@ if (resp) {
       cambio=true;
       bloque();
       cambio=false;
-       // Execute bloque if condition is true
+       // Ejecutar bloque si condition es true
     } else {
       // Parsear bloque sin ejecutar
       condicion=false;
@@ -703,6 +701,48 @@ if (!resp) {
       ;
     }
     jj_consume_token(FI);
+}
+
+  final public void definirMacro() throws ParseException {String nombre;
+List <String > parametrosLista = new ArrayList< >();
+List<String > acciones = new ArrayList< >();
+    jj_consume_token(MACRO);
+    jj_consume_token(ELEMENTO);
+nombre= token.image;
+    jj_consume_token(62);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case ELEMENTO:{
+      parametrosLista = definirParametros();
+      break;
+      }
+    default:
+      jj_la1[17] = jj_gen;
+      ;
+    }
+    jj_consume_token(63);
+}
+
+  final public List <String > definirParametros() throws ParseException {List<String > parametros= new ArrayList < >();
+String parametro;
+    jj_consume_token(ELEMENTO);
+parametro = token.image; parametros.add(parametro);
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 65:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[18] = jj_gen;
+        break label_3;
+      }
+      jj_consume_token(65);
+      jj_consume_token(ELEMENTO);
+parametro = token.image; parametros.add(parametro);
+    }
+{if ("" != null) return parametros;}
+    throw new Error("Missing return statement in function");
 }
 
   final public void walk() throws ParseException {int numero;
@@ -787,7 +827,7 @@ if (condicion==true && cambio==false || condicion==true && cambio==true)
     case EXEC:
     case NEW:
     case RIGHT:{
-      label_3:
+      label_4:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case EXEC:
@@ -851,7 +891,7 @@ world.popBalloons(x); salida = "Comando:  Pop";
           break;
           }
         default:
-          jj_la1[17] = jj_gen;
+          jj_la1[19] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -878,8 +918,8 @@ try {
           break;
           }
         default:
-          jj_la1[18] = jj_gen;
-          break label_3;
+          jj_la1[20] = jj_gen;
+          break label_4;
         }
       }
       break;
@@ -890,7 +930,7 @@ try {
       break;
       }
     default:
-      jj_la1[19] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -914,7 +954,7 @@ world.putBalloons(f); salida = "Command:  Put Balloons";
       break;
       }
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -937,7 +977,7 @@ world.grabBalloons(f);salida="Command:  Pick balloons";
       break;
       }
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -971,7 +1011,7 @@ try
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[22];
+  final private int[] jj_la1 = new int[24];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -981,13 +1021,13 @@ try
 	   jj_la1_init_2();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x0,0x0,0x3ffe00,0x3ffe00,0x0,0x0,0x80000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x38000000,0x78000000,0x800000,0x241e0,0x241e0,0x241e1,0x0,0x0,};
+	   jj_la1_0 = new int[] {0x0,0x0,0x3ffe00,0x3ffe00,0x0,0x0,0x80000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x38000000,0x78000000,0x800000,0x0,0x0,0x241e0,0x241e0,0x241e1,0x0,0x0,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0xc00,0x300,0x0,0x0,0x1e000,0x1e0000,0xff,0xff,0x17000,0x0,0x17000,0x4001a000,0x1e0000,0x80000000,0x0,0x0,0x0,0x2300,0x2300,0x2300,0x1800000,0x1800000,};
+	   jj_la1_1 = new int[] {0xc00,0x300,0x0,0x0,0x1e000,0x1e0000,0xff,0xff,0x17000,0x0,0x17000,0x4001a000,0x1e0000,0x80000000,0x0,0x0,0x0,0x400000,0x0,0x2300,0x2300,0x2300,0x1800000,0x1800000,};
 	}
 	private static void jj_la1_init_2() {
-	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+	   jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0x0,0x0,};
 	}
 
   /** Constructor with InputStream. */
@@ -1001,7 +1041,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1015,7 +1055,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1025,7 +1065,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1043,7 +1083,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1052,7 +1092,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1061,7 +1101,7 @@ try
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 24; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -1117,7 +1157,7 @@ try
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 22; i++) {
+	 for (int i = 0; i < 24; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
