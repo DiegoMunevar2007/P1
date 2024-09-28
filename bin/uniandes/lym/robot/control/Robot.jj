@@ -51,6 +51,17 @@ public class Robot
 
 	String salida=new String();
 }
+private class Macro {
+    String nombre;
+    List<String> params;
+    List<Action> actions;
+
+    Macro(String nombre, List<String> params, List<Action> actions) {
+        this.nombre = nombre;
+        this.params = params;
+        this.actions = actions;
+    }
+ }
 PARSER_END(Robot)
 
 SKIP:
@@ -529,7 +540,7 @@ void definirMacro():
 List <String > parametrosLista = new ArrayList< >();
 List<String > acciones = new ArrayList< >(); }
 {
-< MACRO > <ELEMENTO > { nombre= token.image; } "(" (parametrosLista = definirParametros())? ")"
+< MACRO > <ELEMENTO > { nombre= token.image; } "(" (parametrosLista = definirParametros())? ")" "{" acciones=definirAcciones() " }" 
 }
 List <String > definirParametros():
 {List<String > parametros= new ArrayList < >();
@@ -541,7 +552,13 @@ String parametro; }
   {
   	return parametros; }
 }
-
+List<String > definirAcciones():
+{
+  List<String > acciones= new ArrayList < >();
+}
+{
+  
+}
 void walk():
 {int numero;}
 {
