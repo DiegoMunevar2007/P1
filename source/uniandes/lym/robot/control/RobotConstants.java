@@ -121,17 +121,15 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int FI = 59;
   /** RegularExpression Id. */
-  int P = 60;
+  int ELEMENTO = 60;
   /** RegularExpression Id. */
-  int ELEMENTO = 61;
+  int BALLOONS = 61;
   /** RegularExpression Id. */
-  int BALLOONS = 62;
+  int CHIPS = 62;
   /** RegularExpression Id. */
-  int CHIPS = 63;
+  int NUM = 63;
   /** RegularExpression Id. */
-  int NUM = 64;
-  /** RegularExpression Id. */
-  int DIGIT = 65;
+  int DIGIT = 64;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -198,7 +196,6 @@ public interface RobotConstants {
     "\"WEST\"",
     "\"SOUTH\"",
     "<FI>",
-    "<P>",
     "<ELEMENTO>",
     "\"BALLOONS\"",
     "\"CHIPS\"",
