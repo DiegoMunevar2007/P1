@@ -19,105 +19,119 @@ public interface RobotConstants {
   /** RegularExpression Id. */
   int HOP = 8;
   /** RegularExpression Id. */
-  int TURNTOMY = 9;
+  int LPAR = 9;
   /** RegularExpression Id. */
-  int TURNTOTHE = 10;
+  int RPAR = 10;
   /** RegularExpression Id. */
-  int WALK = 11;
+  int SEMI = 11;
   /** RegularExpression Id. */
-  int JUMP = 12;
+  int IGUAL = 12;
   /** RegularExpression Id. */
-  int DROP = 13;
+  int LBRAC = 13;
   /** RegularExpression Id. */
-  int PICK = 14;
+  int RBRAC = 14;
   /** RegularExpression Id. */
-  int GRAB = 15;
+  int TURNTOMY = 15;
   /** RegularExpression Id. */
-  int LETGO = 16;
+  int TURNTOTHE = 16;
   /** RegularExpression Id. */
-  int POP = 17;
+  int WALK = 17;
   /** RegularExpression Id. */
-  int MOVES = 18;
+  int JUMP = 18;
   /** RegularExpression Id. */
-  int NOP = 19;
+  int DROP = 19;
   /** RegularExpression Id. */
-  int SAFEEXE = 20;
+  int PICK = 20;
   /** RegularExpression Id. */
-  int IF = 21;
+  int GRAB = 21;
   /** RegularExpression Id. */
-  int THEN = 22;
+  int LETGO = 22;
   /** RegularExpression Id. */
-  int ELSE = 23;
+  int POP = 23;
   /** RegularExpression Id. */
-  int DO = 24;
+  int MOVES = 24;
   /** RegularExpression Id. */
-  int REP = 25;
+  int NOP = 25;
   /** RegularExpression Id. */
-  int TIMES = 26;
+  int SAFEEXE = 26;
   /** RegularExpression Id. */
-  int ISBLOCKED = 27;
+  int IF = 27;
   /** RegularExpression Id. */
-  int ISFACING = 28;
+  int THEN = 28;
   /** RegularExpression Id. */
-  int ZERO = 29;
+  int ELSE = 29;
   /** RegularExpression Id. */
-  int NOT = 30;
+  int DO = 30;
   /** RegularExpression Id. */
-  int VALOR = 31;
+  int REP = 31;
   /** RegularExpression Id. */
-  int SIZE = 32;
+  int TIMES = 32;
   /** RegularExpression Id. */
-  int MYX = 33;
+  int ISBLOCKED = 33;
   /** RegularExpression Id. */
-  int MYY = 34;
+  int ISFACING = 34;
   /** RegularExpression Id. */
-  int MYCHIPS = 35;
+  int ZERO = 35;
   /** RegularExpression Id. */
-  int MYBALLOONS = 36;
+  int NOT = 36;
   /** RegularExpression Id. */
-  int BALLOONSHERE = 37;
+  int VALOR = 37;
   /** RegularExpression Id. */
-  int CHIPSHERE = 38;
+  int SIZE = 38;
   /** RegularExpression Id. */
-  int ROOMFORCHIPS = 39;
+  int MYX = 39;
   /** RegularExpression Id. */
-  int EXEC = 40;
+  int MYY = 40;
   /** RegularExpression Id. */
-  int NEW = 41;
+  int MYCHIPS = 41;
   /** RegularExpression Id. */
-  int VAR = 42;
+  int MYBALLOONS = 42;
   /** RegularExpression Id. */
-  int MACRO = 43;
+  int BALLOONSHERE = 43;
   /** RegularExpression Id. */
-  int FORWARD = 44;
+  int CHIPSHERE = 44;
   /** RegularExpression Id. */
-  int RIGHT = 45;
+  int ROOMFORCHIPS = 45;
   /** RegularExpression Id. */
-  int LEFT = 46;
+  int EXEC = 46;
   /** RegularExpression Id. */
-  int FRONT = 47;
+  int NEW = 47;
   /** RegularExpression Id. */
-  int BACK = 48;
+  int VAR = 48;
   /** RegularExpression Id. */
-  int NORTH = 49;
+  int MACRO = 49;
   /** RegularExpression Id. */
-  int EAST = 50;
+  int FORWARD = 50;
   /** RegularExpression Id. */
-  int WEST = 51;
+  int RIGHT = 51;
   /** RegularExpression Id. */
-  int SOUTH = 52;
+  int LEFT = 52;
   /** RegularExpression Id. */
-  int FI = 53;
+  int FRONT = 53;
   /** RegularExpression Id. */
-  int ELEMENTO = 54;
+  int BACK = 54;
   /** RegularExpression Id. */
-  int BALLOONS = 55;
+  int NORTH = 55;
   /** RegularExpression Id. */
-  int CHIPS = 56;
+  int EAST = 56;
   /** RegularExpression Id. */
-  int NUM = 57;
+  int WEST = 57;
   /** RegularExpression Id. */
-  int DIGIT = 58;
+  int SOUTH = 58;
+  /** RegularExpression Id. */
+  int FI = 59;
+  /** RegularExpression Id. */
+  int P = 60;
+  /** RegularExpression Id. */
+  int ELEMENTO = 61;
+  /** RegularExpression Id. */
+  int BALLOONS = 62;
+  /** RegularExpression Id. */
+  int CHIPS = 63;
+  /** RegularExpression Id. */
+  int NUM = 64;
+  /** RegularExpression Id. */
+  int DIGIT = 65;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -133,6 +147,12 @@ public interface RobotConstants {
     "\"Put\"",
     "\"GO\"",
     "\"HOP\"",
+    "\"(\"",
+    "\")\"",
+    "\";\"",
+    "\"=\"",
+    "\"{\"",
+    "\"}\"",
     "\"TURNTOMY\"",
     "\"TURNTOTHE\"",
     "\"WALK\"",
@@ -178,17 +198,12 @@ public interface RobotConstants {
     "\"WEST\"",
     "\"SOUTH\"",
     "<FI>",
+    "<P>",
     "<ELEMENTO>",
     "\"BALLOONS\"",
     "\"CHIPS\"",
     "<NUM>",
     "<DIGIT>",
-    "\"=\"",
-    "\"{\"",
-    "\"}\"",
-    "\"(\"",
-    "\")\"",
-    "\";\"",
     "\",\"",
   };
 
