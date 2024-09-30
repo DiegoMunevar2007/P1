@@ -249,12 +249,17 @@ void bloque(boolean ejecutar, int veces, String condicion):
             }
         } else {
           	boolean cond= llamarCondicional(condicion);
+          	System.out.println("Paso al else");
             while (cond == true) {
+              	System.out.println(cond);
+                System.out.println(not);
                 ejecutarComando(comandosActuales, acciones, ejecutar);
                 cond= llamarCondicional(condicion);
+                
             }
-            not=false;
+            
         }
+        not=false;
     } 
     <RBRAC>
 }
@@ -496,10 +501,6 @@ boolean seleccionarCondicional(String condicional):
   retorno= false;
 }
 {
-  if (not==true) {
-    retorno=!retorno;
-    not=false;
-  }
   return retorno;
 }
 }
@@ -926,7 +927,8 @@ String not():
 String obtenerCondicional():
 {String retorno;}
 {
-  (    retorno = not() | retorno = condicion()) { return retorno; }
+  (
+    retorno = not() | retorno = condicion()) { return retorno; }
 }
 String condicional() :
 {

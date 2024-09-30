@@ -165,12 +165,17 @@ if (condicion.equals("")) {
             }
         } else {
                 boolean cond= llamarCondicional(condicion);
+                System.out.println("Paso al else");
             while (cond == true) {
+                System.out.println(cond);
+                System.out.println(not);
                 ejecutarComando(comandosActuales, acciones, ejecutar);
                 cond= llamarCondicional(condicion);
+
             }
-            not=false;
+
         }
+        not=false;
     jj_consume_token(RBRAC);
 }
 
@@ -483,10 +488,6 @@ if (condicional.equals("isblocked(left)")) {
   retorno= false;
 }
 {
-  if (not==true) {
-    retorno=!retorno;
-    not=false;
-  }
   {if ("" != null) return retorno;}
 }
     throw new Error("Missing return statement in function");
