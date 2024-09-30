@@ -43,9 +43,10 @@ public class Robot
 
 
 	private RobotWorldDec world;
-	private static boolean condicion=true;
-	private static boolean cambio=false;
-	private static int numeroBucle =1;
+	private static int numeroComando=0;
+	private static String condicional;
+	private static String condicionalDo ="";
+	private static boolean not = false;
 	private static HashMap<String, ArrayList<String >> macroParametro = new HashMap<String, ArrayList<String >>();
 	private static HashMap<String,List<String >> macroAcciones = new HashMap<String, List<String >>();
 	private static Map<String,Integer > variables = new HashMap<String,Integer >();
@@ -115,7 +116,9 @@ TOKEN [IGNORE_CASE]:
 | < THEN : "THEN" >
 | < ELSE  : "ELSE" >
 | < DO : "DO" >
+| < OD : "OD" >
 | < REP : "REP" >
+| < PER : "PER" >
 | < TIMES: "TIMES" >
 
 }
@@ -192,7 +195,7 @@ void inicial() :
 void exec():
 { }
 {
-	< EXEC > bloque()  
+	< EXEC > { bloque(true,1,""); } 
 }
 void var():
 {String nombreVariable = "";
@@ -228,134 +231,296 @@ int obtenerVar() :
     catch(Exception e) { }
   }
 }
-void bloque():
-{}
+void bloque(boolean ejecutar, int veces, String condicion):
 {
-  < LBRAC >( comando() )* < RBRAC >
+    ArrayList<String> acciones = new ArrayList<String>();
+    ArrayList<Integer> comandosActuales = new ArrayList<Integer>();
 }
-void repeat():
-{ }
 {
-  < ELEMENTO >
+    <LBRAC> 
+    (acciones=comando(acciones, comandosActuales))* 
+    {
+        if (condicion.equals("")) {
+            int i = 0;
+            System.out.println("Aqui paso");
+            while (i < veces) {
+                ejecutarComando(comandosActuales, acciones, ejecutar);
+                i++;
+            }
+        } else {
+          	boolean cond= llamarCondicional(condicion);
+            while (cond == true) {
+                ejecutarComando(comandosActuales, acciones, ejecutar);
+                cond= llamarCondicional(condicion);
+            }
+            not=false;
+        }
+    } 
+    <RBRAC>
 }
-void comando():
-{int numeroComando=0;
-ArrayList<String > acciones = new ArrayList<String > ();}
-{
- (acciones=walk() { numeroComando =1; }
- | acciones=jump() { numeroComando =2; }
- | acciones=drop() { numeroComando =3; }
- | acciones=pick() { numeroComando = 4; }
- | acciones=grab() { numeroComando =5; }
- | acciones=letgo() { numeroComando =6; }
- | acciones=pop() { numeroComando= 7; }
- | acciones=turntomy() { numeroComando =8; }
- | acciones=turntothe() { numeroComando =9; }
- | acciones=moves() { numeroComando =10; }
- |condicional() { numeroComando=11; }
- |nop() { numeroComando=12; }
- |safeexe() { numeroComando=13; }
- |llamarMacro() { numeroComando=14; })
-
- {
-   ejecutarComando(numeroComando,acciones);
- }
-}
-
-
-void ejecutarComando(int numeroComando, ArrayList<String > elementos):
+boolean llamarCondicional(String condicion):
 {}
 {
   {
-    for (int numeroIteraciones=1; numeroIteraciones<=numeroBucle; numeroIteraciones++) {
-      if (numeroComando==1) {
-        walk_accion(Integer.parseInt(elementos.get(0)));
+    boolean resultado = seleccionarCondicional(condicion);
+    if (not==true) {
+      return !resultado;
+    }
+    else {
+      return resultado;
+    }
+}
+}
+String repeat():
+{String acciones; }
+{
+  < REP ><VALOR > {acciones=token.image; } <TIMES >
+   { return acciones; }
+}
+ArrayList<String > comando(ArrayList<String >acciones,ArrayList<Integer >comandosActuales):
+{
+String accion;}
+{
+ (accion=walk() { numeroComando =1; comandosActuales.add(1); acciones.add(accion);}
+ | accion=jump() { numeroComando =2;comandosActuales.add(2); acciones.add(accion);}
+ | accion=drop() { numeroComando =3; comandosActuales.add(3); acciones.add(accion);}
+ | accion=pick() { numeroComando = 4;comandosActuales.add(4); acciones.add(accion);}
+ | accion=grab() { numeroComando =5;comandosActuales.add(5); acciones.add(accion);}
+ | accion=letgo() { numeroComando =6; comandosActuales.add(6);acciones.add(accion);}
+ | accion=pop() { numeroComando= 7; comandosActuales.add(7); acciones.add(accion);}
+ | accion=turntomy() { numeroComando =8; comandosActuales.add(8);acciones.add(accion);}
+ | accion=turntothe() { numeroComando =9;comandosActuales.add(9); acciones.add(accion);}
+ | moves(acciones) { numeroComando =10; comandosActuales.add(10); }
+ |accion=condicional() { numeroComando=11; comandosActuales.add(11); acciones.add(accion);} 
+ |accion=nop() { numeroComando=12; comandosActuales.add(12); acciones.add(accion);}
+ |safeexe() { numeroComando=13; comandosActuales.add(13); }
+ |accion=repeat() { numeroComando=14; comandosActuales.add(14); acciones.add(accion);}
+ |accion=dofun() { numeroComando=15; comandosActuales.add(15); acciones.add(accion); })
+ {return acciones; }
+}
+
+String dofun():
+{String resultado;}
+{
+  < DO > <LPAR >resultado=obtenerCondicional() < RPAR > { return resultado; }
+}
+
+void leerThen(boolean ejecutar):
+{}
+{
+  <THEN> bloque(ejecutar,1, "")
+}
+void leerElse(boolean ejecutar):
+{}
+{
+  (< ELSE > bloque(ejecutar,1,""))?
+}
+void leerCondicionalFinal():
+{}
+{
+  < FI ><SEMI >
+}
+void ejecutarComando(ArrayList<Integer > comandosActuales,ArrayList<String > acciones, boolean ejecutar):
+{}
+{
+  { if (ejecutar==true) {
+    
+    int posActual=0;
+    for (int comando:comandosActuales) {  
+      if (comando==1) {
+        walk_accion(Integer.parseInt(acciones.get(posActual)));
       }
-      else if (numeroComando==2) {
-        jump_accion(Integer.parseInt(elementos.get(0)));
+      else if (comando==2) {
+        jump_accion(Integer.parseInt(acciones.get(posActual)));
       }
-	  else if (numeroComando==3) {
-		drop_accion(Integer.parseInt(elementos.get(0)));
+	  else if (comando==3) {
+		drop_accion(Integer.parseInt(acciones.get(posActual)));
 	  }
-	  else if (numeroComando==4) {
-		pick_accion(Integer.parseInt(elementos.get(0)));
+	  else if (comando==4) {
+		pick_accion(Integer.parseInt(acciones.get(posActual)));
 	  }
-	  else if (numeroComando==5) {
-		grab_accion(Integer.parseInt(elementos.get(0)));
+	  else if (comando==5) {
+		grab_accion(Integer.parseInt(acciones.get(posActual)));
 	  }
-	  else if (numeroComando==6) {
-		letgo_accion(Integer.parseInt(elementos.get(0)));
+	  else if (comando==6) {
+		letgo_accion(Integer.parseInt(acciones.get(posActual)));
 	  }	
-	  else if (numeroComando==7) {
-		pop_accion(Integer.parseInt(elementos.get(0)));
+	  else if (comando==7) {
+		pop_accion(Integer.parseInt(acciones.get(posActual)));
 	  }	
-	  else if (numeroComando==8) {
-		if (elementos.get(0).equals("Right")) {
+	  else if (comando==8) {
+		if (acciones.get(posActual).equals("Right")) {
 			turntomyright();
 		}
-		else if (elementos.get(0).equals("Left")) {
+		else if (acciones.get(posActual).equals("Left")) {
 			turntomyleft();
 		}
-		else if (elementos.get(0).equals("Back")) {
+		else if (acciones.get(posActual).equals("Back")) {
 			turntomyback();
 		}
-		else if (elementos.get(0).equals("Front")) {
+		else if (acciones.get(posActual).equals("Front")) {
 			turntomyfront();	
 		}
     }
-    	else if (numeroComando==9) {
-		if (elementos.get(0).equals("North")) {
+    	else if (comando==9) {
+		if (acciones.get(posActual).equals("North")) {
 			turntothenorth();
 		}
-		else if (elementos.get(0).equals("South")) {
+		else if (acciones.get(posActual).equals("South")) {
 			turntothesouth();
 		}
-		else if (elementos.get(0).equals("East")) {
+		else if (acciones.get(posActual).equals("East")) {
 			turntotheeast();
 		}
-		else if (elementos.get(0).equals("West")) {
+		else if (acciones.get(posActual).equals("West")) {
 			turntothewest();	
 		}
 	}
-	else if (numeroComando==10) {
-	  int numeroElementos = elementos.size();
-	  for (int i=0; i<numeroElementos; i++) {
-		if (elementos.get(i).equals("Forward")) {
+	else if (comando==10) {
+	  int numeroElementos = acciones.size();
+	  for (int i=posActual; i<numeroElementos; i++) {
+		if (acciones.get(i).equals("Forward")) {
 			movesforward();
 		}
-		else if (elementos.get(i).equals("Right")) {
+		else if (acciones.get(i).equals("Right")) {
 			movesRight();
 		}
-		else if (elementos.get(i).equals("Left")) {
+		else if (acciones.get(i).equals("Left")) {
 			movesLeft();
 		}
-		else if (elementos.get(i).equals("Back")) {
+		else if (acciones.get(i).equals("Back")) {
 			movesBack();
 		}
+		if (acciones.get(i).equals("end")) {
+		  break;
+	}
 	  }
 	}
-	else if (numeroComando==11) {
-	  // No se hace nada
+	else if (comando==11) {
+	  condicional= acciones.get(posActual);
+	  boolean condicionalFlag = seleccionarCondicional(condicional);
+	  if (not==true) {
+	    condicionalFlag = !condicionalFlag;
+	    not=false;
+	  }
+	   if (condicionalFlag==true)
+ 		{ leerThen(true); leerElse(false); }
+ 	   else { leerThen(false); leerElse(true);}
+ 								  leerCondicionalFinal();
+	}
+	else if (comando==12) {
+	  posActual++;
+	}
+	else if (comando==14) {
+	  int numero=Integer.parseInt(acciones.get(posActual));
+	  repExec(numero);
+	}
+	else if (comando==15) {
+	  String condicion= acciones.get(posActual);
+	  doExec(condicion);
+	}
+	else if (comando==16) {
+	  
+	}
+	posActual++;
+}
   }
 }
 }
-ArrayList<String > turntomy():
-{ArrayList<String > listaRetorno = new ArrayList<String >(); }
+void doExec (String condicion):
+{}
+{
+  bloque(true,1,condicion) < OD >
+}
+void repExec(int numero):
+{ }
+{
+  bloque(true,numero,"") <PER >
+}
+boolean seleccionarCondicional(String condicional):
+{boolean retorno;}
+{
+  {
+    if (condicional.equals("isblocked(left)")) {
+	  retorno=isblockedleft();
+	}
+	else if (condicional.equals("isblocked(right)")) {
+	  retorno=isblockedright();
+	}
+	else if (condicional.equals("isblocked(front)")) {
+	  retorno= isblockedfront();
+	}
+	else if (condicional.equals("isblocked(back)")) {
+	  retorno=isblockedback();
+	}
+	else if (condicional.equals("isfacing(north)")) {
+	  retorno= isFacingNorth();
+	}
+	else if (condicional.equals("isfacing(south)")) {
+	  retorno= isFacingSouth();
+	}
+	else if (condicional.equals("isfacing(east)")) {
+	  retorno= isFacingEast();
+	}
+	else if (condicional.equals("isfacing(west)")) {
+	  retorno= isFacingWest();
+	}
+	else if (condicional.equals("zero(0)")) {
+	  retorno= zeroExec(condicional);
+	}
+	else if (condicional.equals("zero(size)")) {
+	  retorno= zeroExec(condicional);
+  }
+	  else if (condicional.equals("zero(myx)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(myy)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(mychips)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(myballoons)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(balloonshere)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(chipshere)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else if (condicional.equals("zero(roomforchips)")) {
+	  retorno= zeroExec(condicional);
+  }
+  else {
+  retorno= false;
+}
+{
+  if (not==true) {
+    retorno=!retorno;
+    not=false;
+  }
+  return retorno;
+}
+}
+}
+String turntomy():
+{String retorno; }
 {
   < TURNTOMY >
-  < LPAR > (< RIGHT > { listaRetorno.add("Right"); }
-  | < LEFT > { listaRetorno.add("Left"); }
-  |< BACK > { listaRetorno.add("Back"); }
-  | < FRONT > { listaRetorno.add("Front"); }
+  < LPAR > (< RIGHT > { retorno="Right"; }
+  | < LEFT > { retorno="Left"; }
+  |< BACK > { retorno="Back"; }
+  | < FRONT > { retorno="Front"; }
   )
   
    < RPAR ><SEMI >
-   { return listaRetorno; }
+   { return retorno; }
 }
 void turntomyright():
 { }
 {
-  {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+  { if (world.facingNorth())
   					  { world.turnRight(); }
   					  else if (world.facingWest())
   					  { world.turnRight(); world.turnRight(); }
@@ -363,95 +528,95 @@ void turntomyright():
   					  { world.turnRight(); world.turnRight(); world.turnRight(); }
   					 }
   					 
-}
+
 }
 void turntomyleft():
 { }
 {
-  { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+   { if (world.facingNorth())
   				  { world.turnRight(); world.turnRight(); world.turnRight(); }
   				  else if (world.facingEast())
   				  { world.turnRight(); world.turnRight(); }
   				  else if (world.facingSouth())
   				  { world.turnRight(); }
   				}
-  			 }
+  			 
 }
 void turntomyback():
 { }
 {
-  {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+   { if (world.facingNorth())
   				{ world.turnRight(); world.turnRight();  }
   				else if (world.facingEast())
   				{ world.turnRight(); }
   				else if (world.facingWest())
   				{ world.turnRight(); world.turnRight(); world.turnRight();  }
   		    }
-  		  }
+  		  
 }
 void turntomyfront():
 { }
-{ { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingEast())
+{  { if (world.facingEast())
   				{world.turnRight(); world.turnRight(); world.turnRight(); }
   				else if (world.facingSouth())
   				{world.turnRight(); world.turnRight(); }
   				else if (world.facingWest())
   				{ world.turnRight();}
-             } }
+             } 
 }
-ArrayList<String > turntothe():
-{ArrayList<String > listaRetorno = new ArrayList< String>(); }
+String turntothe():
+{String Retorno ; }
 {
   (< TURNTOTHE >) <LPAR>
-  (<NORTH> { listaRetorno.add("North"); }  			
-| < SOUTH > { listaRetorno.add("South"); }
-| < EAST > { listaRetorno.add("East"); }				
-| < WEST > { listaRetorno.add("West"); }
+  (<NORTH> { Retorno="North"; }  			
+| < SOUTH > { Retorno="South"; }
+| < EAST > { Retorno="East"; }				
+| < WEST > { Retorno="West"; }
 )
    <RPAR><SEMI>
-   { return listaRetorno; }
+   { return Retorno; }
 }
 void turntothenorth():
 {}
 {
-  {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingWest())
+   { if (world.facingWest())
   			{ world.turnRight(); }
   			else if (world.facingSouth())
   			{ world.turnRight(); world.turnRight();  }
   			else if (world.facingEast())
   			{world.turnRight(); world.turnRight(); world.turnRight(); }
   			 } }
-}
+
 void turntothesouth():
 { }
 {
-  { if (condicion==true && cambio==false || condicion==true && cambio==true) {  if (world.facingNorth())
+ {  if (world.facingNorth())
 				{world.turnRight(); world.turnRight(); }
 			else if (world.facingEast())
 				{ world.turnRight();}
 			else if (world.facingWest())
 				{ world.turnRight();world.turnRight();world.turnRight();}
-				 } }
+				 } 
 }
 void turntotheeast():
 {}
 {
-  { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+   { if (world.facingNorth())
 				{world.turnRight(); }
 			else if (world.facingWest())
 				{world.turnRight();world.turnRight(); }
 			else if (world.facingSouth())
-				{world.turnRight();world.turnRight();world.turnRight(); }} }
+				{world.turnRight();world.turnRight();world.turnRight(); }} 
 }
 void turntothewest():
 { }
 {
-  {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+   { if (world.facingNorth())
 			{ world.turnRight();world.turnRight();world.turnRight();}
 			else if (world.facingEast())
 			{world.turnRight();world.turnRight();}
 			else if (world.facingSouth())
-			{world.turnRight();}  } }
+			{world.turnRight();}  } 
 }
 int valor():
 { int numero= 0;}
@@ -472,34 +637,37 @@ int valor():
 }
 
 
-void nop():
+String nop():
 { }
 {
   < NOP ><SEMI>
+  {
+    return "nop" ;}
 }
-ArrayList<String > moves():
+ArrayList<String > moves(ArrayList<String > acciones):
 {ArrayList<String > listaRetorno  = new ArrayList<String >(); }
 {
-  (< MOVES >) <LPAR> (< FORWARD > { listaRetorno.add("Forward"); }
-| < RIGHT > { listaRetorno.add("Right"); }
-| < LEFT > { listaRetorno.add("Left"); }
-| < BACK > { listaRetorno.add("Back"); }
+  (< MOVES >) <LPAR> (< FORWARD > { acciones.add("Forward"); }
+| < RIGHT > { acciones.add("Right"); }
+| < LEFT > { acciones.add("Left"); }
+| < BACK > { acciones.add("Back"); }
 )
 
   		
- ( "," (< FORWARD > { listaRetorno.add("Forward"); }
-| < RIGHT > { listaRetorno.add("Right"); }
-| < LEFT > { listaRetorno.add("Left"); }
-| < BACK > { listaRetorno.add("Back"); }
+ ( "," (< FORWARD > { acciones.add("Forward"); }
+| < RIGHT > { acciones.add("Right"); }
+| < LEFT > { acciones.add("Left"); }
+| < BACK > { acciones.add("Back"); }
 ) )* <RPAR><SEMI>
 {
+  acciones.add("end");
   return listaRetorno; }
 }
 void movesforward():
 {}
 {
 
-   {if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+   { if (world.facingNorth())
   								 {world.up(); }
   								 else if (world.facingEast())
 								 {world.right(); }
@@ -507,12 +675,12 @@ void movesforward():
 								 {world.down(); }
 								 else if (world.facingWest())
 								 {world.left(); }
-  								} }
+  								} 
  }
 void movesRight():
 {}
 {
-  {if (condicion==true && cambio==false || condicion==true && cambio==true) {  if (world.facingNorth())
+  {  if (world.facingNorth())
   				  {world.right(); }
   				  else if (world.facingEast())
   				  {world.down(); }
@@ -520,12 +688,12 @@ void movesRight():
   				  {world.left(); }
   				  else if (world.facingWest())
   				  {world.up(); }
-  				} }
+  				} 
 }
 void movesLeft():
 { }
 {
-  { if (condicion==true && cambio==false || condicion==true && cambio==true) { if (world.facingNorth())
+  { if (world.facingNorth())
   				  {world.left(); }
   				  else if (world.facingEast())
   				  {world.up(); }
@@ -533,12 +701,12 @@ void movesLeft():
   				  {world.right(); }
   				  else if (world.facingWest())
   				  {world.down(); }
-  				} }
+  				} 
  }
 void movesBack():
 { }
 {
-{if (condicion==true && cambio==false || condicion==true && cambio==true) {
+ {
   				  if (world.facingNorth())
   				  {world.down(); }
   				  else if (world.facingEast())
@@ -547,148 +715,227 @@ void movesBack():
   				  {world.up(); }
   				  else if (world.facingWest())
   				  {world.right(); }
-  				} }
+  				} 
 
 }
-boolean isblocked():
-{}
+String isblocked():
+{String listaRetorno;}
 {
   
  
-  < ISBLOCKED > <LPAR> (< LEFT ><RPAR> {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x-1,world.getPosition().y)); }
+  < ISBLOCKED > <LPAR> (< LEFT ><RPAR> {listaRetorno="isblocked(left)";}
+| < RIGHT ><RPAR> {listaRetorno="isblocked(right)";}
+| < FRONT ><RPAR> {listaRetorno="isblocked(front)";}
+| < BACK ><RPAR> {listaRetorno="isblocked(back)";}
+
+)
+{
+  return listaRetorno; }
+}
+
+boolean isblockedleft():
+{
+}
+{
+  {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x-1,world.getPosition().y)); }
 										else if (world.facingEast()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y-1)); }
 										else if (world.facingSouth()) { return world.isBlocked(new Point(world.getPosition().x+1,world.getPosition().y)); }
 										else if (world.facingWest()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y+1)); }
 										}
-| < RIGHT ><RPAR> {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x+1,world.getPosition().y)); }
+}
+boolean isblockedright():
+{ }
+  {
+    {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x+1,world.getPosition().y)); }
 										else if (world.facingEast()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y+1)); }
 										else if (world.facingSouth()) { return world.isBlocked(new Point(world.getPosition().x-1,world.getPosition().y)); }
 										else if (world.facingWest()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y-1)); }
 										}
-| < FRONT ><RPAR> {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y+1)); }
+  }
+boolean isblockedfront():
+{ }
+{
+  {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y+1)); }
 										else if (world.facingEast()) { return world.isBlocked(new Point(world.getPosition().x+1,world.getPosition().y)); }
 										else if (world.facingSouth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y-1)); }
 										else if (world.facingWest()) { return world.isBlocked(new Point(world.getPosition().x-1,world.getPosition().y)); }
 										}
-| < BACK ><RPAR> {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y-1)); }
+}
+boolean isblockedback():
+{ }
+{
+  {if (world.facingNorth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y-1)); }
 										else if (world.facingEast()) { return world.isBlocked(new Point(world.getPosition().x-1,world.getPosition().y)); }
 										else if (world.facingSouth()) { return world.isBlocked(new Point(world.getPosition().x,world.getPosition().y+1)); }
 										else if (world.facingWest()) { return world.isBlocked(new Point(world.getPosition().x+1,world.getPosition().y)); }
 										}
-
-)
 }
-boolean isfacing():
-{boolean resp =false; }
+String isfacing():
+{String  listaRetorno ;}
 {
-  < ISFACING > <LPAR>(< NORTH > {resp= world.facingNorth(); } |< SOUTH > { resp = world.facingSouth(); } | < EAST > {resp = world.facingEast(); } | < WEST > {resp = world.facingWest(); } )  <RPAR>
-  {return resp; }
+  < ISFACING > <LPAR>(< NORTH > {listaRetorno="isfacing(north)"; } |< SOUTH > { listaRetorno="isfacing(south)"; } | < EAST > {listaRetorno="isfacing(east)"; } | < WEST > {listaRetorno="isfacing(west)"; } )  <RPAR>
+  {return listaRetorno; }
   
 }
-boolean zero():
-{ }	
-{
-  < ZERO > <LPAR> { return valor()==0; } <RPAR>
-}
-void safeexecution():
+boolean isFacingNorth():
 { }
-{ ( { try { walk(); }
+{
+  { return world.facingNorth(); }
+}
+boolean isFacingSouth():
+{ }
+{
+  { return world.facingSouth(); }
+}
+boolean isFacingEast():
+{ }
+{
+  { return world.facingEast(); }
+}
+boolean isFacingWest():
+{ }
+{
+  { return world.facingWest(); }
+}
+
+String zero():
+{String listaRetorno;
+String valor; }	
+{
+  < ZERO > <LPAR> (< VALOR >
+| < SIZE > 
+| < MYX > 
+| < MYY > 
+| < MYCHIPS > 
+| < MYBALLOONS > 
+| < BALLOONSHERE > 
+| < CHIPSHERE >
+| < ROOMFORCHIPS >) { valor=token.image; }  <RPAR>
+{listaRetorno="zero("+valor.toLowerCase()+")"; return listaRetorno; }
+}
+boolean zeroExec(String elemento):
+{boolean retorno= false;}
+{ 
+  { if (elemento.equals("zero(size)")) {
+		if (world.getN()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(myx)")) {
+		if (world.getPosition().getX()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(myy)")) {
+		if (world.getPosition().getY()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(mychips)")) {
+		if (world.getMyChips()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(myballoons)")) {
+		if (world.getMyBalloons()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(balloonshere)")) {
+		if (world.countBalloons()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(chipshere)")) {
+		if (world.chipsToPick()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(roomforchips)")) {
+		if (world.freeSpacesForChips()==0) {
+			retorno = true;
+		}
+  }
+  else if (elemento.equals("zero(0)")) {
+		retorno = true;
+  }
+  return retorno;
+  }
+
+}
+
+void safeexecution():
+{String array;
+int numero; }
+{ ( array=walk() { numero = Integer.parseInt(array);} { try { walk_accion(numero); }
 				catch (Error e) {
 					System.out.println("Error en walk, no se ejecutó");
 				}
 		}
-| { try { jump(); }
+| array=jump() { numero = Integer.parseInt(array);} { try { jump_accion(numero); }
 		catch (Error e) {
 			System.out.println("Error en jump, no se ejecutó");
 		}
  }
- | { try { drop(); }
+ |array=drop() { numero = Integer.parseInt(array);} { try { drop_accion(numero); }
 			catch (Error e) {
 				System.out.println("Error en drop, no se ejecutó");
 			}
  }
- | { try { pick(); }
+ |array=pick() { numero = Integer.parseInt(array);} { try { pick_accion(numero); }
 			catch (Error e) {
 				System.out.println("Error en pick, no se ejecutó");
 			}
  }
- | { try { grab(); }
+ |array=grab(){ numero = Integer.parseInt(array);} { try { grab_accion(numero); }
 			catch (Error e) {
 				System.out.println("Error en grab, no se ejecutó");
 			}
  }
- | { try { letgo(); }
+ |array=letgo(){ numero = Integer.parseInt(array);} { try { letgo_accion(numero); }
 			catch (Error e) {
 				System.out.println("Error en letgo, no se ejecutó");
 			}
  }
- | { try { pop(); }
+ |array=pop(){ numero = Integer.parseInt(array);} { try { pop_accion(numero); }
 			catch (Error e) {
 				System.out.println("Error en pop, no se ejecutó");
 			}
  }
  )  }
   
-void safeexe():
+void  safeexe():
 { }
 {
-< SAFEEXE > <LPAR> safeexecution() <RPAR> <SEMI> (<RPAR ><SEMI>)?
+< SAFEEXE > <LPAR> safeexecution() <RPAR> <SEMI> 
 }
-boolean condicion():
-{boolean resp = false; }
+String condicion():
+{String resp; }
 { //TODO: Saber si este tipo de sintaxis es valida juas juas 
   (resp=isblocked() | resp=isfacing() | resp=zero() )
   {return resp; }
 }
-boolean not():
+String not():
 {
-    boolean resp = false;
+   String resp;
+    not=true;
 }
 {
-    <NOT> <LPAR> { resp = condicion(); } <RPAR> { return !resp; }
+    <NOT> <LPAR> { resp = condicion(); } <RPAR> { return resp; }
 }
-
-void condicional() :
+String obtenerCondicional():
+{String retorno;}
 {
-  boolean resp = false;
+  (    retorno = not() | retorno = condicion()) { return retorno; }
+}
+String condicional() :
+{
+ String listaRetorno;
+ boolean resp;
 }
 {
-  <IF> <LPAR> (resp = not() | resp = condicion()) <RPAR> 
-  <THEN> 
-  {
-    if (resp==true) {
-      cambio=true;
-      bloque(); 
-      cambio=false;
-       // Ejecutar bloque si condition es true
-    } else {
-      // Parsear bloque sin ejecutar
-      condicion=false;
-	  cambio=true;
-      bloque();
-      condicion=true;
-      cambio=false;
-    }
-  }
-  ( <ELSE> 
-  {
-    System.out.println("Entro a Else");
-    if (resp==false) {
-      cambio=true;
-      System.out.println("Entro al if del else");
-      bloque(); 
-      cambio=false;
-    } else {
-      // Parsear bloque sin ejecutar
-	  condicion=false;
-	  cambio=true;
-      bloque();
-      condicion=true;
-      cambio=false;
-    }
-  })?
-  <FI>
-  <SEMI>
+  <IF> <LPAR> (listaRetorno= obtenerCondicional()) <RPAR>
+  {return listaRetorno; }
 }
 void llamarMacro():
 { String nombre;
@@ -946,99 +1193,101 @@ List<String> definirAcciones(ArrayList<String> parametros):
  { return acciones; }
 }
 
-ArrayList<String > walk():
+String walk():
 {int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
+String retorno;}
 {
- <WALK> <LPAR> {numero = valor(); }  <RPAR><SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
+ <WALK> <LPAR> {numero = valor(); }  <RPAR><SEMI> {retorno=Integer.toString(numero); return retorno; }
 }
 void walk_accion(int numero):
 {}
 {
   {numero =(int)numero;}
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	System.out.println("doble si"); try { world.moveForward(numero,false); } catch (Error e) { System.out.println(e); } salida = "Command: WALK";} }
+{ 
+	 world.moveForward(numero,false);  salida = "Command: WALK";} 
+
+
 }
 
-ArrayList<String > jump():
-{ArrayList<String > listaRetorno = new ArrayList<String >();
-int numero;}
-
+String jump(): 
 {
- <JUMP> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
+    int numero;
+    String resultado;
 }
-
+    {
+        <JUMP> <LPAR> {numero = valor(); } <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
+    }
 
 void jump_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.moveForward(numero, true); salida = "Command: JUMP";} }
+{ 
+	world.moveForward(numero, true); salida = "Command: JUMP";} 
 }
 
-ArrayList<String > drop():
-{int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
-{
- <DROP> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
-}
+String drop():
+ {int numero;
+ String resultado;
+ }
+ {
+     <DROP> <LPAR> {numero = valor(); } <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
+ }
 void drop_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.putChips(numero); salida = "Command: DROP";} }
+{ 
+	world.putChips(numero); salida = "Command: DROP";} 
 }
 
-ArrayList<String > pick():
+String pick():
 {int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
+String resultado;}
 {
- <PICK> <LPAR> {numero = valor(); } <RPAR> <SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
+ <PICK> <LPAR> {numero = valor(); } <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
 }
 void pick_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.pickChips(numero); salida = "Command: PICK";} }
+{ 
+	world.pickChips(numero); salida = "Command: PICK";} 
 }
-
-ArrayList<String >grab():
+String grab():
 {int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
+String resultado;}
 {
- <GRAB> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno;  }
+ <GRAB> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
 }
 void grab_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.grabBalloons(numero); salida = "Command: GRAB";} }
+{
+  world.grabBalloons(numero); salida = "Command: GRAB";} 
 }
 
-ArrayList<String > letgo():
+String letgo():
 {int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
+String resultado; }
 {
- <LETGO> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
+ <LETGO> <LPAR> {numero = valor(); }  <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
 }
 void letgo_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.putBalloons(numero); salida = "Command: LETGO";} }
+{
+	world.putBalloons(numero); salida = "Command: LETGO";} 
 }
 
-ArrayList<String > pop():
+String pop():
 {int numero;
-ArrayList<String > listaRetorno = new ArrayList<String >();}
+String resultado;}
 {
- <POP> <LPAR> {numero = valor(); } <RPAR> <SEMI> {listaRetorno.add(Integer.toString(numero)); return listaRetorno; }
+ <POP> <LPAR> {numero = valor(); } <RPAR> <SEMI> { resultado = Integer.toString(numero); return resultado; }
 }
 void pop_accion(int numero):
 {}
 {
-{ if (condicion==true && cambio==false || condicion==true && cambio==true) {
-	world.popBalloons(numero); salida = "Command: POP";} }
+{
+	world.popBalloons(numero); salida = "Command: POP";} 
 }
 
 //boolean command(uniandes.lym.robot.view.Console sistema) :
